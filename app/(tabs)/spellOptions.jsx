@@ -33,6 +33,9 @@ const spellOptions = () => {
   const [effectDeets, setEffectDeets] = useState("");
   const [saveType, setSaveType] = useState("Dexterity");
   const [damageType, setDamageType] = useState("");
+  const [isDamageTypePlus, setIsDamageTypePlus] = useState(false);
+  const [isDamageTypeNeutral, setIsDamageTypeNeutral] = useState(true);
+  const [isDamageTypeMinus, setIsDamageTypeMinus] = useState(false);
   const [isSelectedDamageRange1, setIsSelectedDamageRange1] = useState(false);
   const [isSelectedDamageRange2, setIsSelectedDamageRange2] = useState(false);
   const [isSelectedDamageType1, setIsSelectedDamageType1] = useState(false);
@@ -45,8 +48,6 @@ const spellOptions = () => {
   const [isSelectedDamageType8, setIsSelectedDamageType8] = useState(false);
   const [isSelectedDamageType9, setIsSelectedDamageType9] = useState(false);
   const [isSelectedDamageType10, setIsSelectedDamageType10] = useState(false);
-  const [damageTypePlus, setDamageTypePlus] = useState(false);
-  const [damageTypeMinus, setDamageTypeMinus] = useState(false);
   const [isSelectedAoe1, setIsSelectedAoe1] = useState(false);
   const [isSelectedAoe2, setIsSelectedAoe2] = useState(false);
   const [isSelectedAoe3, setIsSelectedAoe3] = useState(false);
@@ -111,8 +112,9 @@ const spellOptions = () => {
     setIsSelectedDamageType8(false);
     setIsSelectedDamageType9(false);
     setIsSelectedDamageType10(false);
-    setDamageTypePlus(false);
-    setDamageTypeMinus(false);
+    setIsDamageTypePlus(false);
+    setIsDamageTypeNeutral(true);
+    setIsDamageTypeMinus(false);
     setIsSelectedAoe1(false);
     setIsSelectedAoe2(false);
     setIsSelectedAoe3(false);
@@ -143,33 +145,60 @@ const spellOptions = () => {
   const changeDamageType = (type, damageMod, isSelected) => {
     let newSize;
     if (!isSelected) {
+      if (damageMod === 0) {
+        setIsDamageTypeNeutral(true);
+        setIsDamageTypeMinus(false);
+        setIsDamageTypePlus(false);
+      } else if (damageMod > 0) {
+        setIsDamageTypeNeutral(false);
+        setIsDamageTypeMinus(false);
+        setIsDamageTypePlus(true);
+      } else {
+        setIsDamageTypeNeutral(false);
+        setIsDamageTypeMinus(true);
+        setIsDamageTypePlus(false);
+      }
       setDamageType(type);
-      if (damageMod < 0) {
-        setDamageTypeMinus(true);
-        setDamageTypePlus(false);
+      if (
+        (damageMod < 0 && isDamageTypeNeutral) ||
+        (damageMod === 0 && isDamageTypePlus)
+      ) {
         newSize = damageSize - 2;
         setDamageSize(newSize);
         if (damageValue > 0 && allowDamage && isDamage) {
           setDamageDeets("d" + newSize);
           setDamageDisplay(damageValue + "d" + newSize);
         }
-      } else if (damageMod > 0) {
-        setDamageTypeMinus(false);
-        setDamageTypePlus(true);
+      } else if (
+        (damageMod > 0 && isDamageTypeNeutral) ||
+        (damageMod === 0 && isDamageTypeMinus)
+      ) {
         newSize = damageSize + 2;
         setDamageSize(newSize);
         if (damageValue > 0 && allowDamage && isDamage) {
           setDamageDeets("d" + newSize);
           setDamageDisplay(damageValue + "d" + newSize);
         }
-      } else {
-        setDamageTypeMinus(false);
-        setDamageTypePlus(false);
+      } else if (damageMod > 0 && isDamageTypeMinus) {
+        newSize = damageSize + 4;
+        setDamageSize(newSize);
+        if (damageValue > 0 && allowDamage && isDamage) {
+          setDamageDeets("d" + newSize);
+          setDamageDisplay(damageValue + "d" + newSize);
+        }
+      } else if (damageMod < 0 && isDamageTypePlus) {
+        newSize = damageSize - 4;
+        setDamageSize(newSize);
+        if (damageValue > 0 && allowDamage && isDamage) {
+          setDamageDeets("d" + newSize);
+          setDamageDisplay(damageValue + "d" + newSize);
+        }
       }
     } else {
       setDamageType("");
-      setDamageTypeMinus(false);
-      setDamageTypePlus(false);
+      setIsDamageTypeMinus(false);
+      setIsDamageTypeNeutral(true);
+      setIsDamageTypePlus(false);
       if (damageMod < 0) {
         newSize = damageSize + 2;
         setDamageSize(newSize);
@@ -196,12 +225,12 @@ const spellOptions = () => {
           setDamageSize(size - 4);
           newSize = size - 4;
         } else if (
-          (isAoe && !damageTypeMinus && !damageTypePlus) ||
-          (!isAoe && damageTypeMinus && !damageTypePlus)
+          (isAoe && !isDamageTypeMinus && !isDamageTypePlus) ||
+          (!isAoe && isDamageTypeMinus && !isDamageTypePlus)
         ) {
           setDamageSize(size - 2);
           newSize = size - 2;
-        } else if (!isAoe && !damageTypeMinus && damageTypePlus) {
+        } else if (!isAoe && !isDamageTypeMinus && isDamageTypePlus) {
           setDamageSize(size + 2);
           newSize = size + 2;
         } else {
@@ -361,56 +390,60 @@ const spellOptions = () => {
     damageAllow,
     aoeAllow,
     durationAllow,
-    reset
+    isSelected
   ) => {
     if (allowEffect) {
-      setEffect(value);
-      setEffectDeets(text);
-      if (!isEffect && !reset) {
-        setIsEffect(true);
-        let damage = damageValue - 1;
-        setDamageValue(damage);
-        if (damageValue === 1) {
-          setDamageDisplay("");
-        } else {
-          setDamageDisplay(damage + damageDeets);
-        }
-        if (!damage) {
+      if (!isSelected) {
+        setEffect(value);
+        setEffectDeets(text);
+        if (!isEffect) {
+          setIsEffect(true);
+          let damage = damageValue - 1;
+          setDamageValue(damage);
+          if (damageLevel === 1 || !isDamage) {
+            setDamageDisplay("");
+          } else {
+            setDamageDisplay(damage + damageDeets);
+          }
           setDamageRange("60 feet");
         }
-      } else if (isEffect && reset) {
+        if (damageAllow) {
+          setAllowDamage(true);
+        }
+        if (aoeAllow) {
+          setAllowAoe(true);
+        }
+        if (durationAllow) {
+          setAllowDuration(true);
+        }
+        if (!damageAllow) {
+          changeDamage(0, true, true);
+          setAllowDamage(false);
+        }
+        if (!aoeAllow) {
+          changeAoe(0, "single target", false);
+          setAllowAoe(false);
+        }
+        if (!durationAllow) {
+          changeDuration(true);
+          setAllowDuration(false);
+        }
+      } else if (isEffect && isSelected) {
         setIsEffect(false);
-        let damage = damageValue + 1;
-        setDamageValue(damage);
-        if (damage === 0) {
+        let damage = damageLevel + 1;
+        setDamageLevel(damage);
+        if (damage === 0 || !isDamage) {
           setDamageDisplay("");
         } else {
           setDamageDisplay(damage + damageDeets);
+          setDamageValue(damage);
         }
         if (!isAoe && !isDuration) {
           setDamageRange("120 feet");
         }
-      }
-      if (damageAllow) {
         setAllowDamage(true);
-      }
-      if (!damageAllow) {
-        changeDamage(0, true, true);
-        setAllowDamage(false);
-      }
-      if (aoeAllow) {
         setAllowAoe(true);
-      }
-      if (!aoeAllow) {
-        changeAoe(0, "single target", false);
-        setAllowAoe(false);
-      }
-      if (durationAllow) {
         setAllowDuration(true);
-      }
-      if (!durationAllow) {
-        changeDuration(0, "instantaneous");
-        setAllowDuration(false);
       }
     }
   };
@@ -419,15 +452,17 @@ const spellOptions = () => {
     <View style={styles.container}>
       <Text style={styles.textTitle}>Spell Options</Text>
       <Text style={styles.textHeader}>Spell Level: {spellLevel}</Text>
-      <Text style={styles.textBody}>Spell Effects:</Text>
       <Text style={styles.textBody}>
         Time to Cast: Action{"     "}Range: {damageRange}
       </Text>
       <Text style={styles.textBody}>Area of Effect: {aoeDeets}</Text>
       <Text style={styles.textBody}>
-        Target/s attempt a {saveType} save. On a failed save, target/sare
-        affected by {damageDisplay} {effectDeets} {durationDeets}
+        Save: {saveType} {"      "}Duration: {durationDeets}
       </Text>
+      <Text style={styles.textBody}>
+        Spell Damage: {damageDisplay} {damageType}
+      </Text>
+      <Text style={styles.textBody}>Spell Effect: {effectDeets}</Text>
       <TouchableOpacity style={styles.buttonReset} onPress={resetSpell}>
         <Text style={styles.buttonText}>Reset Spell</Text>
       </TouchableOpacity>
@@ -758,68 +793,188 @@ const spellOptions = () => {
         <Text style={styles.textSubtitle}>Magic Effects: {effectDeets}</Text>
         {/* -------------------------------Effect Level 0 -------------------------------------*/}
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => changeEffect(0, "", true, true, true, true)}
-        >
-          <Text style={styles.buttonText}>no effect</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() =>
-            changeEffect(0, "Knock Prone ", true, true, true, false)
-          }
+          style={[styles.button, isSelectedEffect1 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(
+              0,
+              "Knock Prone ",
+              true,
+              true,
+              true,
+              isSelectedEffect1
+            );
+            setIsSelectedEffect1(!isSelectedEffect1);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>Knock Prone</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => changeEffect(0, "Push 10ft ", true, true, true, false)}
+          style={[styles.button, isSelectedEffect2 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(0, "Push 10ft", true, true, true, isSelectedEffect2);
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(!isSelectedEffect2);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>Push 10ft</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => changeEffect(0, "Pull 10ft ", true, true, true, false)}
+          style={[styles.button, isSelectedEffect3 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(0, "Pull 10ft", true, true, true, isSelectedEffect3);
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(!isSelectedEffect3);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>Pull 10ft</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button}
-          onPress={() =>
-            changeEffect(0, "Slow Movement half", true, true, true, false)
-          }
+          style={[styles.button, isSelectedEffect4 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(
+              0,
+              "Slow Movement by half",
+              true,
+              true,
+              true,
+              isSelectedEffect4
+            );
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(!isSelectedEffect4);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>Slow Movement by half</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button}
-          onPress={() =>
+          style={[styles.button, isSelectedEffect5 && styles.buttonSelected]}
+          onPress={() => {
             changeEffect(
               0,
               "add 1d4 to next ability check, attack roll or saving throw",
               false,
               true,
               true,
-              false
-            )
-          }
+              isSelectedEffect5
+            );
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(!isSelectedEffect5);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>
             add 1d4 to next ability check, attack roll or saving throw
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button}
-          onPress={() =>
+          style={[styles.button, isSelectedEffect6 && styles.buttonSelected]}
+          onPress={() => {
             changeEffect(
               0,
               "1d4 penalty to next ability check, attack roll or saving throw",
               true,
               true,
               true,
-              false
-            )
-          }
+              isSelectedEffect6
+            );
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(!isSelectedEffect6);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>
             1d4 penalty to next ability check, attack roll or saving throw
@@ -827,81 +982,336 @@ const spellOptions = () => {
         </TouchableOpacity>
         {/* -------------------------------Effect Level 1 -------------------------------------*/}
         <TouchableOpacity
-          style={styles.button1}
-          onPress={() =>
-            changeEffect(1, "levitate 20ft", false, false, true, false)
-          }
+          style={[styles.button1, isSelectedEffect7 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(
+              1,
+              "levitate 20ft",
+              false,
+              false,
+              true,
+              isSelectedEffect7
+            );
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(!isSelectedEffect7);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>levitate 20ft</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button1}
-          onPress={() => changeEffect(1, "fear", true, true, true, false)}
+          style={[styles.button1, isSelectedEffect8 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(1, "Fear", true, true, true, isSelectedEffect8);
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(!isSelectedEffect8);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>fear</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button1}
-          onPress={() => changeEffect(1, "charm", false, true, true, false)}
+          style={[styles.button1, isSelectedEffect9 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(1, "Charm", false, true, true, isSelectedEffect9);
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(!isSelectedEffect9);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>charm</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button1}
-          onPress={() => changeEffect(1, "restrain", true, true, true, false)}
+          style={[styles.button1, isSelectedEffect10 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(1, "restrain", true, true, true, isSelectedEffect10);
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(!isSelectedEffect10);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>restrain</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button1}
-          onPress={() => changeEffect(1, "barrier", false, true, true, false)}
+          style={[styles.button1, isSelectedEffect11 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(1, "Barrier", false, true, true, isSelectedEffect11);
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(!isSelectedEffect11);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>barrier</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button1}
-          onPress={() =>
-            changeEffect(1, "incapcitate", true, true, true, false)
-          }
+          style={[styles.button1, isSelectedEffect12 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(
+              1,
+              "Incapacitate",
+              true,
+              true,
+              true,
+              isSelectedEffect12
+            );
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(!isSelectedEffect12);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>incapcitate</Text>
         </TouchableOpacity>
         {/* -------------------------------Effect Level 2 -------------------------------------*/}
         <TouchableOpacity
-          style={styles.button2}
-          onPress={() => changeEffect(2, "fly", false, false, true, false)}
+          style={[styles.button2, isSelectedEffect13 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(2, "Fly", false, false, true, isSelectedEffect13);
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(!isSelectedEffect13);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>fly</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button2}
-          onPress={() =>
-            changeEffect(2, "teleport", false, false, false, false)
-          }
+          style={[styles.button2, isSelectedEffect14 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(
+              2,
+              "Teleport",
+              false,
+              false,
+              false,
+              isSelectedEffect14
+            );
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(!isSelectedEffect14);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>teleport</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button2}
-          onPress={() => changeEffect(2, "paralyze", false, true, true, false)}
+          style={[styles.button2, isSelectedEffect15 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(2, "Paralyze", false, true, true, isSelectedEffect15);
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(!isSelectedEffect15);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>paralyze</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button2}
-          onPress={() => changeEffect(2, "haste", false, false, true, false)}
+          style={[styles.button2, isSelectedEffect16 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(2, "Haste", false, false, true, isSelectedEffect16);
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(!isSelectedEffect16);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>haste</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button2}
-          onPress={() => changeEffect(2, "slow", true, false, true, false)}
+          style={[styles.button2, isSelectedEffect17 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(2, "Slow", true, false, true, isSelectedEffect17);
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(!isSelectedEffect17);
+            setIsSelectedEffect18(false);
+          }}
         >
           <Text style={styles.buttonText}>slow</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button2}
-          onPress={() => changeEffect(2, "stun", true, false, true, false)}
+          style={[styles.button2, isSelectedEffect18 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(2, "Stun", true, false, true, isSelectedEffect18);
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(!isSelectedEffect18);
+          }}
         >
           <Text style={styles.buttonText}>stun</Text>
         </TouchableOpacity>
