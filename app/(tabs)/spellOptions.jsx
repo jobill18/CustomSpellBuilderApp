@@ -4,7 +4,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  TextInput,
 } from "react-native";
 import React, { useState } from "react";
 
@@ -23,7 +22,6 @@ const spellOptions = () => {
   const [allowDamage, setAllowDamage] = useState(true);
   const [allowAoe, setAllowAoe] = useState(true);
   const [allowDuration, setAllowDuration] = useState(true);
-  const [allowEffect, setAllowEffect] = useState(true);
   const [damageSize, setDamageSize] = useState(8);
   const [damageRange, setDamageRange] = useState("120 feet");
   const [damageDeets, setDamageDeets] = useState("");
@@ -31,6 +29,7 @@ const spellOptions = () => {
   const [aoeDeets, setAoeDeets] = useState("single target");
   const [durationDeets, setDurationDeets] = useState("instantaneous");
   const [effectDeets, setEffectDeets] = useState("");
+  const [effectDeetsShort, setEffectDeetsShort] = useState("");
   const [saveType, setSaveType] = useState("Dexterity");
   const [damageType, setDamageType] = useState("");
   const [isDamageTypePlus, setIsDamageTypePlus] = useState(false);
@@ -75,6 +74,49 @@ const spellOptions = () => {
   const [isDisabledDecrease, setIsDisabledDecrease] = useState(true);
   const spellLevel = damage + aoe + duration + effect;
 
+  const resetDamage = () => {
+    setDamage(0);
+    setDamageLevel(0);
+    setDamageValue(1);
+    setIsDamage(false);
+    setIsRanged(true);
+    setAllowAoe(true);
+    setDamageDeets("");
+    setDamageDisplay("");
+    setDamageType("");
+    setIsSelectedDamageRange1(false);
+    setIsSelectedDamageRange2(false);
+    setIsSelectedDamageType1(false);
+    setIsSelectedDamageType2(false);
+    setIsSelectedDamageType3(false);
+    setIsSelectedDamageType4(false);
+    setIsSelectedDamageType5(false);
+    setIsSelectedDamageType6(false);
+    setIsSelectedDamageType7(false);
+    setIsSelectedDamageType8(false);
+    setIsSelectedDamageType9(false);
+    setIsSelectedDamageType10(false);
+    setIsDamageTypePlus(false);
+    setIsDamageTypeNeutral(true);
+    setIsDamageTypeMinus(false);
+    setIsDisabledIncrease(false);
+    setIsDisabledDecrease(true);
+  };
+  const resetAoe = () => {
+    setAoe(0);
+    setIsAoe(false);
+    setAoeDeets("single target");
+    setIsSelectedAoe1(false);
+    setIsSelectedAoe2(false);
+    setIsSelectedAoe3(false);
+    setIsSelectedAoe4(false);
+  };
+  const resetDuration = () => {
+    setDuration(0);
+    setIsDuration(false);
+    setDurationDeets("instantaneous");
+    setIsSelectedDuration1(false);
+  };
   const resetSpell = () => {
     setDamage(0);
     setDamageLevel(0);
@@ -90,7 +132,6 @@ const spellOptions = () => {
     setAllowDamage(true);
     setAllowAoe(true);
     setAllowDuration(true);
-    setAllowEffect(true);
     setDamageSize(8);
     setDamageRange("120 feet");
     setDamageDeets("");
@@ -221,7 +262,7 @@ const spellOptions = () => {
       let newSize;
       if (allowDamage) {
         setIsDamage(true);
-        if (isAoe && damageTypeMinus) {
+        if (isAoe && isDamageTypeMinus) {
           setDamageSize(size - 4);
           newSize = size - 4;
         } else if (
@@ -387,86 +428,99 @@ const spellOptions = () => {
   const changeEffect = (
     value,
     text,
+    shortText,
     damageAllow,
     aoeAllow,
     durationAllow,
-    isSelected
+    isSelected,
+    save
   ) => {
-    if (allowEffect) {
-      if (!isSelected) {
-        setEffect(value);
-        setEffectDeets(text);
-        if (!isEffect) {
-          setIsEffect(true);
-          let damage = damageValue - 1;
-          setDamageValue(damage);
-          if (damageLevel === 1 || !isDamage) {
-            setDamageDisplay("");
-          } else {
-            setDamageDisplay(damage + damageDeets);
-          }
-          setDamageRange("60 feet");
-        }
-        if (damageAllow) {
-          setAllowDamage(true);
-        }
-        if (aoeAllow) {
-          setAllowAoe(true);
-        }
-        if (durationAllow) {
-          setAllowDuration(true);
-        }
-        if (!damageAllow) {
-          changeDamage(0, true, true);
-          setAllowDamage(false);
-        }
-        if (!aoeAllow) {
-          changeAoe(0, "single target", false);
-          setAllowAoe(false);
-        }
-        if (!durationAllow) {
-          changeDuration(true);
-          setAllowDuration(false);
-        }
-      } else if (isEffect && isSelected) {
-        setIsEffect(false);
-        let damage = damageLevel + 1;
+    if (!isSelected) {
+      setSaveType(save);
+      setEffect(value);
+      setEffectDeets(text);
+      setEffectDeetsShort(shortText);
+      if (!isEffect) {
+        setIsEffect(true);
+        let damage = damageLevel - 1;
         setDamageLevel(damage);
-        if (damage === 0 || !isDamage) {
+        if (damageLevel === 1 || !isDamage) {
           setDamageDisplay("");
         } else {
-          setDamageDisplay(damage + damageDeets);
           setDamageValue(damage);
+          setDamageDisplay(damage + damageDeets);
         }
-        if (!isAoe && !isDuration) {
-          setDamageRange("120 feet");
-        }
+        setDamageRange("60 feet");
+      }
+      if (damageAllow) {
         setAllowDamage(true);
+      }
+      if (aoeAllow) {
         setAllowAoe(true);
+      }
+      if (durationAllow) {
         setAllowDuration(true);
       }
+      if (!damageAllow) {
+        setAllowDamage(false);
+        resetDamage();
+      }
+      if (!aoeAllow) {
+        setAllowAoe(false);
+        resetAoe();
+      }
+      if (!durationAllow) {
+        setAllowDuration(false);
+        resetDuration();
+      }
+    } else {
+      setIsEffect(false);
+      let damage = damageLevel + 1;
+      setDamageLevel(damage);
+      if (damage === 0 || !isDamage) {
+        setDamageDisplay("");
+      } else {
+        setDamageDisplay(damage + damageDeets);
+        setDamageValue(damage);
+      }
+      if (!isAoe && !isDuration) {
+        setDamageRange("120 feet");
+      }
+      setAllowDamage(true);
+      setAllowAoe(true);
+      setAllowDuration(true);
+      setSaveType("Dexterity");
+      setEffect(0);
+      setEffectDeets("");
+      setEffectDeetsShort("");
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.textTitle}>Spell Options</Text>
-      <Text style={styles.textHeader}>Spell Level: {spellLevel}</Text>
-      <Text style={styles.textBody}>
-        Time to Cast: Action{"     "}Range: {damageRange}
-      </Text>
-      <Text style={styles.textBody}>Area of Effect: {aoeDeets}</Text>
-      <Text style={styles.textBody}>
-        Save: {saveType} {"      "}Duration: {durationDeets}
-      </Text>
-      <Text style={styles.textBody}>
-        Spell Damage: {damageDisplay} {damageType}
-      </Text>
-      <Text style={styles.textBody}>Spell Effect: {effectDeets}</Text>
-      <TouchableOpacity style={styles.buttonReset} onPress={resetSpell}>
-        <Text style={styles.buttonText}>Reset Spell</Text>
-      </TouchableOpacity>
-      <ScrollView>
+      <View style={styles.resetButtonView}>
+        {/* <Text style={styles.textTitle}>Spell Options</Text> */}
+        <Text style={styles.textHeader}>Spell Level: {spellLevel}</Text>
+        <TouchableOpacity style={styles.buttonReset} onPress={resetSpell}>
+          <Text style={styles.buttonText}>Reset Spell</Text>
+        </TouchableOpacity>
+      </View>
+      <ScrollView style={styles.scrollViewHeader}>
+        <Text style={styles.textBody}>
+          Time to Cast: Action{"     "}Range: {damageRange}
+        </Text>
+        <Text style={styles.textBody}>Area of Effect: {aoeDeets}</Text>
+        <Text style={styles.textBody}>
+          Save: {saveType} {"      "}Duration: {durationDeets}
+        </Text>
+        <Text style={styles.textBody}>
+          Spell Damage: {damageDisplay}
+          {"      "}Damage Type: {damageType}
+        </Text>
+        <Text style={styles.textBody}>Spell Effect: {effectDeets}</Text>
+      </ScrollView>
+      <View style={styles.divider}></View>
+      <ScrollView style={styles.scrollViewBody}>
         {/* ----------------------------------Damage Value------------------------------------------*/}
         <Text style={styles.textSubtitle}>Damage: {damageDisplay}</Text>
         <View style={styles.rowContainer}>
@@ -498,7 +552,7 @@ const spellOptions = () => {
             setIsSelectedDamageRange2(false);
           }}
         >
-          <Text style={styles.buttonText}>range</Text>
+          <Text style={styles.buttonText}>Ranged Spell</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
@@ -511,7 +565,7 @@ const spellOptions = () => {
             setIsSelectedDamageRange2(!isSelectedDamageRange2);
           }}
         >
-          <Text style={styles.buttonText}>touch</Text>
+          <Text style={styles.buttonText}>Touch Spell</Text>
         </TouchableOpacity>
         {/* -------------------------------Damage Type -------------------------------------*/}
         <Text style={styles.textSubtitle}>Damage Type: {damageType}</Text>
@@ -731,7 +785,7 @@ const spellOptions = () => {
         <TouchableOpacity
           style={[styles.button1, isSelectedAoe1 && styles.buttonSelected]}
           onPress={() => {
-            changeAoe(0, "10ft square ", isSelectedAoe1);
+            changeAoe(1, "10ft square ", isSelectedAoe1);
             setIsSelectedAoe1(!isSelectedAoe1);
             setIsSelectedAoe2(false);
             setIsSelectedAoe3(false);
@@ -743,7 +797,7 @@ const spellOptions = () => {
         <TouchableOpacity
           style={[styles.button1, isSelectedAoe2 && styles.buttonSelected]}
           onPress={() => {
-            changeAoe(0, "15ft line ", isSelectedAoe2);
+            changeAoe(1, "15ft line ", isSelectedAoe2);
             setIsSelectedAoe1(false);
             setIsSelectedAoe2(!isSelectedAoe2);
             setIsSelectedAoe3(false);
@@ -756,7 +810,7 @@ const spellOptions = () => {
         <TouchableOpacity
           style={[styles.button2, isSelectedAoe3 && styles.buttonSelected]}
           onPress={() => {
-            changeAoe(1, "20ft square ", isSelectedAoe3);
+            changeAoe(2, "20ft square ", isSelectedAoe3);
             setIsSelectedAoe1(false);
             setIsSelectedAoe2(false);
             setIsSelectedAoe3(!isSelectedAoe3);
@@ -768,7 +822,7 @@ const spellOptions = () => {
         <TouchableOpacity
           style={[styles.button2, isSelectedAoe4 && styles.buttonSelected]}
           onPress={() => {
-            changeAoe(1, "30ft line ", isSelectedAoe4);
+            changeAoe(2, "30ft line ", isSelectedAoe4);
             setIsSelectedAoe1(false);
             setIsSelectedAoe2(false);
             setIsSelectedAoe3(false);
@@ -790,18 +844,22 @@ const spellOptions = () => {
           <Text style={styles.buttonText}>10 minutes</Text>
         </TouchableOpacity>
         {/* ----------------------------------Effect ------------------------------------------*/}
-        <Text style={styles.textSubtitle}>Magic Effects: {effectDeets}</Text>
+        <Text style={styles.textSubtitle}>
+          Magic Effects: {effectDeetsShort}
+        </Text>
         {/* -------------------------------Effect Level 0 -------------------------------------*/}
         <TouchableOpacity
           style={[styles.button, isSelectedEffect1 && styles.buttonSelected]}
           onPress={() => {
             changeEffect(
               0,
-              "Knock Prone ",
+              "Knock Prone",
+              "Prone",
               true,
               true,
               true,
-              isSelectedEffect1
+              isSelectedEffect1,
+              "Dexterity or Strength"
             );
             setIsSelectedEffect1(!isSelectedEffect1);
             setIsSelectedEffect2(false);
@@ -828,7 +886,16 @@ const spellOptions = () => {
         <TouchableOpacity
           style={[styles.button, isSelectedEffect2 && styles.buttonSelected]}
           onPress={() => {
-            changeEffect(0, "Push 10ft", true, true, true, isSelectedEffect2);
+            changeEffect(
+              0,
+              "Push 10ft",
+              "Push",
+              true,
+              true,
+              false,
+              isSelectedEffect2,
+              "Strength"
+            );
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(!isSelectedEffect2);
             setIsSelectedEffect3(false);
@@ -854,7 +921,16 @@ const spellOptions = () => {
         <TouchableOpacity
           style={[styles.button, isSelectedEffect3 && styles.buttonSelected]}
           onPress={() => {
-            changeEffect(0, "Pull 10ft", true, true, true, isSelectedEffect3);
+            changeEffect(
+              0,
+              "Pull 10ft",
+              "Pull",
+              true,
+              true,
+              false,
+              isSelectedEffect3,
+              "Strength"
+            );
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(false);
             setIsSelectedEffect3(!isSelectedEffect3);
@@ -882,11 +958,13 @@ const spellOptions = () => {
           onPress={() => {
             changeEffect(
               0,
-              "Slow Movement by half",
+              "Affected creature's movement is reduced by half",
+              "Half speed",
               true,
               true,
               true,
-              isSelectedEffect4
+              isSelectedEffect4,
+              "Strength"
             );
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(false);
@@ -908,18 +986,20 @@ const spellOptions = () => {
             setIsSelectedEffect18(false);
           }}
         >
-          <Text style={styles.buttonText}>Slow Movement by half</Text>
+          <Text style={styles.buttonText}>Half speed movement</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, isSelectedEffect5 && styles.buttonSelected]}
           onPress={() => {
             changeEffect(
               0,
-              "add 1d4 to next ability check, attack roll or saving throw",
+              "target creature adds 1d4 to next ability check, attack roll or saving throw",
+              "1d4 aid",
               false,
               true,
               true,
-              isSelectedEffect5
+              isSelectedEffect5,
+              "Wisdom"
             );
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(false);
@@ -941,20 +1021,20 @@ const spellOptions = () => {
             setIsSelectedEffect18(false);
           }}
         >
-          <Text style={styles.buttonText}>
-            add 1d4 to next ability check, attack roll or saving throw
-          </Text>
+          <Text style={styles.buttonText}>1d4 Aid</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, isSelectedEffect6 && styles.buttonSelected]}
           onPress={() => {
             changeEffect(
               0,
-              "1d4 penalty to next ability check, attack roll or saving throw",
+              "Affected creature receives a 1d4 penalty to next ability check, attack roll or saving throw",
+              "1d4 Penalty",
               true,
               true,
               true,
-              isSelectedEffect6
+              isSelectedEffect6,
+              "Wisdom"
             );
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(false);
@@ -976,9 +1056,7 @@ const spellOptions = () => {
             setIsSelectedEffect18(false);
           }}
         >
-          <Text style={styles.buttonText}>
-            1d4 penalty to next ability check, attack roll or saving throw
-          </Text>
+          <Text style={styles.buttonText}>1d4 Penalty</Text>
         </TouchableOpacity>
         {/* -------------------------------Effect Level 1 -------------------------------------*/}
         <TouchableOpacity
@@ -986,11 +1064,13 @@ const spellOptions = () => {
           onPress={() => {
             changeEffect(
               1,
-              "levitate 20ft",
+              "Target is lifted 20ft. Additional movement is possible if the target is pushed, pulled or is able to move itself by someoutside means.",
+              "Levitate",
               false,
               false,
               true,
-              isSelectedEffect7
+              isSelectedEffect7,
+              "Constitution"
             );
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(false);
@@ -1012,12 +1092,21 @@ const spellOptions = () => {
             setIsSelectedEffect18(false);
           }}
         >
-          <Text style={styles.buttonText}>levitate 20ft</Text>
+          <Text style={styles.buttonText}>Levitate 20ft</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button1, isSelectedEffect8 && styles.buttonSelected]}
           onPress={() => {
-            changeEffect(1, "Fear", true, true, true, isSelectedEffect8);
+            changeEffect(
+              1,
+              "Target is affraid of the spellcaster and has the frightened condition. Target cannot willingly move toward the spellcaster and has disadvantage on ability checks and attack rolls while they can see the spellcaster",
+              "Fear",
+              true,
+              true,
+              true,
+              isSelectedEffect8,
+              "Wisdom"
+            );
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(false);
             setIsSelectedEffect3(false);
@@ -1038,12 +1127,21 @@ const spellOptions = () => {
             setIsSelectedEffect18(false);
           }}
         >
-          <Text style={styles.buttonText}>fear</Text>
+          <Text style={styles.buttonText}>Fear</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button1, isSelectedEffect9 && styles.buttonSelected]}
           onPress={() => {
-            changeEffect(1, "Charm", false, true, true, isSelectedEffect9);
+            changeEffect(
+              1,
+              "Target is charmed by the spellcaster. They have advanatage on the save if hostile toward the caster. The target cannot attack the spellcaster or target them with harmful abilities or magical effects. The spellcaster has advantage on social interactions with the target. The target may repeat the save at the end of each of their turns or when taking damage. ",
+              "Charm",
+              false,
+              true,
+              true,
+              isSelectedEffect9,
+              "Wisdom"
+            );
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(false);
             setIsSelectedEffect3(false);
@@ -1064,12 +1162,21 @@ const spellOptions = () => {
             setIsSelectedEffect18(false);
           }}
         >
-          <Text style={styles.buttonText}>charm</Text>
+          <Text style={styles.buttonText}>Charm</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button1, isSelectedEffect10 && styles.buttonSelected]}
           onPress={() => {
-            changeEffect(1, "restrain", true, true, true, isSelectedEffect10);
+            changeEffect(
+              1,
+              "Target is restained until the spell ends (beginning of the caster's next turn if only one turn). The target may use it's action to repeat the save on each of it's turns.",
+              "Restrain",
+              true,
+              true,
+              true,
+              isSelectedEffect10,
+              "Strength"
+            );
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(false);
             setIsSelectedEffect3(false);
@@ -1090,44 +1197,20 @@ const spellOptions = () => {
             setIsSelectedEffect18(false);
           }}
         >
-          <Text style={styles.buttonText}>restrain</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button1, isSelectedEffect11 && styles.buttonSelected]}
-          onPress={() => {
-            changeEffect(1, "Barrier", false, true, true, isSelectedEffect11);
-            setIsSelectedEffect1(false);
-            setIsSelectedEffect2(false);
-            setIsSelectedEffect3(false);
-            setIsSelectedEffect4(false);
-            setIsSelectedEffect5(false);
-            setIsSelectedEffect6(false);
-            setIsSelectedEffect7(false);
-            setIsSelectedEffect8(false);
-            setIsSelectedEffect9(false);
-            setIsSelectedEffect10(false);
-            setIsSelectedEffect11(!isSelectedEffect11);
-            setIsSelectedEffect12(false);
-            setIsSelectedEffect13(false);
-            setIsSelectedEffect14(false);
-            setIsSelectedEffect15(false);
-            setIsSelectedEffect16(false);
-            setIsSelectedEffect17(false);
-            setIsSelectedEffect18(false);
-          }}
-        >
-          <Text style={styles.buttonText}>barrier</Text>
+          <Text style={styles.buttonText}>Restrain</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button1, isSelectedEffect12 && styles.buttonSelected]}
           onPress={() => {
             changeEffect(
               1,
+              "The target is incapacitated and cannot take actions or reactions until the spell ends (beginning of caster's next turn if instantaneous). They may repeat the save at the end of each of their turns or when taking damage.",
               "Incapacitate",
               true,
               true,
               true,
-              isSelectedEffect12
+              isSelectedEffect12,
+              "Wisdom"
             );
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(false);
@@ -1149,13 +1232,57 @@ const spellOptions = () => {
             setIsSelectedEffect18(false);
           }}
         >
-          <Text style={styles.buttonText}>incapcitate</Text>
+          <Text style={styles.buttonText}>Incapcitate</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button1, isSelectedEffect17 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(
+              1,
+              "Target may not take reactions and their AC is reduced by 2. They may choose to take an action or bonus action on their turn and may not attack more than once. Spells take two turns to cast. The target may repeat the save at the end of each of their turns",
+              "Slow",
+              true,
+              true,
+              true,
+              isSelectedEffect17,
+              "Wisdom"
+            );
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(false);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(!isSelectedEffect17);
+            setIsSelectedEffect18(false);
+          }}
+        >
+          <Text style={styles.buttonText}>Slow</Text>
         </TouchableOpacity>
         {/* -------------------------------Effect Level 2 -------------------------------------*/}
         <TouchableOpacity
           style={[styles.button2, isSelectedEffect13 && styles.buttonSelected]}
           onPress={() => {
-            changeEffect(2, "Fly", false, false, true, isSelectedEffect13);
+            changeEffect(
+              2,
+              "The target gains a flying speed of 60 feet and can hover.",
+              "Fly",
+              false,
+              false,
+              true,
+              isSelectedEffect13,
+              ""
+            );
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(false);
             setIsSelectedEffect3(false);
@@ -1176,18 +1303,20 @@ const spellOptions = () => {
             setIsSelectedEffect18(false);
           }}
         >
-          <Text style={styles.buttonText}>fly</Text>
+          <Text style={styles.buttonText}>Fly 60 ft</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button2, isSelectedEffect14 && styles.buttonSelected]}
           onPress={() => {
             changeEffect(
               2,
+              "Spellcaster teleports themself to an unoccupied location within 30 ft that they can see. They may spend an additional spell slot to bring another creature that is within 5 ft. An unwilling creature may make a dexterity or constitution save.",
               "Teleport",
               false,
               false,
               false,
-              isSelectedEffect14
+              isSelectedEffect14,
+              "Dexterity or Constitution"
             );
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(false);
@@ -1209,12 +1338,21 @@ const spellOptions = () => {
             setIsSelectedEffect18(false);
           }}
         >
-          <Text style={styles.buttonText}>teleport</Text>
+          <Text style={styles.buttonText}>Teleport 30 ft</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button2, isSelectedEffect15 && styles.buttonSelected]}
           onPress={() => {
-            changeEffect(2, "Paralyze", false, true, true, isSelectedEffect15);
+            changeEffect(
+              2,
+              "Target is paralyzed until the spell ends. They are incapacitated and cannot move or speak. They automatically fail strength and dexterity saves. Attacks made against them are made at advantage and, when the attacker is within 5ft, successful attacks are automatically a critical hit. They may repeat the save at the end of each of their turns.",
+              "Paralyze",
+              false,
+              true,
+              true,
+              isSelectedEffect15,
+              "Wisdom"
+            );
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(false);
             setIsSelectedEffect3(false);
@@ -1235,12 +1373,21 @@ const spellOptions = () => {
             setIsSelectedEffect18(false);
           }}
         >
-          <Text style={styles.buttonText}>paralyze</Text>
+          <Text style={styles.buttonText}>Paralyze</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button2, isSelectedEffect16 && styles.buttonSelected]}
           onPress={() => {
-            changeEffect(2, "Haste", false, false, true, isSelectedEffect16);
+            changeEffect(
+              2,
+              "If the target is a willing creature, their speed is doubled and their armor class is increased by 2. They have advantage on dexterity saves and may make an addition action on their turn. The extra action may be used to make a single attack, dash, disengage, hide, or utilize an item. When the spell ends, they are incapacitated and the cannot move until the end of their next turn.",
+              "Haste",
+              false,
+              false,
+              true,
+              isSelectedEffect16,
+              ""
+            );
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(false);
             setIsSelectedEffect3(false);
@@ -1261,38 +1408,12 @@ const spellOptions = () => {
             setIsSelectedEffect18(false);
           }}
         >
-          <Text style={styles.buttonText}>haste</Text>
+          <Text style={styles.buttonText}>Haste</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button2, isSelectedEffect17 && styles.buttonSelected]}
-          onPress={() => {
-            changeEffect(2, "Slow", true, false, true, isSelectedEffect17);
-            setIsSelectedEffect1(false);
-            setIsSelectedEffect2(false);
-            setIsSelectedEffect3(false);
-            setIsSelectedEffect4(false);
-            setIsSelectedEffect5(false);
-            setIsSelectedEffect6(false);
-            setIsSelectedEffect7(false);
-            setIsSelectedEffect8(false);
-            setIsSelectedEffect9(false);
-            setIsSelectedEffect10(false);
-            setIsSelectedEffect11(false);
-            setIsSelectedEffect12(false);
-            setIsSelectedEffect13(false);
-            setIsSelectedEffect14(false);
-            setIsSelectedEffect15(false);
-            setIsSelectedEffect16(false);
-            setIsSelectedEffect17(!isSelectedEffect17);
-            setIsSelectedEffect18(false);
-          }}
-        >
-          <Text style={styles.buttonText}>slow</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.button2, isSelectedEffect18 && styles.buttonSelected]}
           onPress={() => {
-            changeEffect(2, "Stun", true, false, true, isSelectedEffect18);
+            changeEffect(2, "The target is stunned", "Stun", true, false, true, isSelectedEffect18, "Constitution");
             setIsSelectedEffect1(false);
             setIsSelectedEffect2(false);
             setIsSelectedEffect3(false);
@@ -1313,7 +1434,43 @@ const spellOptions = () => {
             setIsSelectedEffect18(!isSelectedEffect18);
           }}
         >
-          <Text style={styles.buttonText}>stun</Text>
+          <Text style={styles.buttonText}>Stun</Text>
+        </TouchableOpacity> */}
+        {/* -------------------------------Effect Level 3 -------------------------------------*/}
+        <TouchableOpacity
+          style={[styles.button3, isSelectedEffect11 && styles.buttonSelected]}
+          onPress={() => {
+            changeEffect(
+              3,
+              "An invisible 5ft by 10ft barrier appears within range. The barrier appears in any orientation you choose, as a horizontal or vertical barrier or at an angle. It can be free floating or resting on a solid surface. If the spell has an area of effect, you can form it into a hemispherical dome or a sphere, or you can shape a flat surface made up of 10 foot tall panels. Each panel must be contiguous with another panel. In any form, the wall is 1/4 inch thick. It lasts for the duration. If the wall cuts through a creature's space when it appears, the creature is pushed to one side of the wall (your choice which side). Nothing can physically pass through the wall. It is immune to all damage and can't be dispelled by dispel magic. A disintegrate spell destroys the wall instantly, however. The wall also extends into the Ethereal Plane, blocking ethereal travel through the wall.",
+              "Barrier",
+              false,
+              true,
+              true,
+              isSelectedEffect11,
+              ""
+            );
+            setIsSelectedEffect1(false);
+            setIsSelectedEffect2(false);
+            setIsSelectedEffect3(false);
+            setIsSelectedEffect4(false);
+            setIsSelectedEffect5(false);
+            setIsSelectedEffect6(false);
+            setIsSelectedEffect7(false);
+            setIsSelectedEffect8(false);
+            setIsSelectedEffect9(false);
+            setIsSelectedEffect10(false);
+            setIsSelectedEffect11(!isSelectedEffect11);
+            setIsSelectedEffect12(false);
+            setIsSelectedEffect13(false);
+            setIsSelectedEffect14(false);
+            setIsSelectedEffect15(false);
+            setIsSelectedEffect16(false);
+            setIsSelectedEffect17(false);
+            setIsSelectedEffect18(false);
+          }}
+        >
+          <Text style={styles.buttonTextBlack}>Barrier</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -1361,7 +1518,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     backgroundColor: "green",
-    paddingBottom: "2%",
+    paddingVertical: "5%",
   },
   image: {
     width: "100%",
@@ -1417,5 +1574,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
     fontWeight: "bold", // Bold text
+  },
+  buttonTextBlack: {
+    color: "black",
+    fontSize: 16,
+    textAlign: "center",
+    fontWeight: "bold", // Bold text
+  },
+  scrollViewHeader: {
+    height: "20%",
+  },
+  scrollViewBody: {
+    height: "60%",
+  },
+  divider: {
+    height: "1%",
+    backgroundColor: "white",
+  },
+  resetButtonView: {
+    height: "20%",
+    alignContent: "center",
+    justifyContent: "center",
   },
 });
