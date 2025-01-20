@@ -1,5 +1,12 @@
-import { View, Text, StyleSheet, ImageBackground } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  TouchableOpacity,
+} from "react-native";
 import React from "react";
+import { Link } from "expo-router";
 import backgroundWizard from "@/assets/images/Background.jpg";
 
 const home = () => {
@@ -12,10 +19,21 @@ const home = () => {
       >
         <Text style={styles.textTitle}>Custom Spell Builder</Text>
         <Text style={styles.textBody}>
-          Use this app to create custom spells for Dungeons and Dragons! Use the
-          navigation below to look at the available spell options. After
-          choosing your options, the spell level and effects will be displayed.
+          Use this app to create custom spells for Dungeons and Dragons! If this
+          is your first time, take a look at the tutorial. Otherwise, enjoy
+          crafting your own unique spells. Happy spell crafting!!!
         </Text>
+
+        <TouchableOpacity style={styles.buttonTutorial}>
+          <Link href="/(tabs)/tutorial">
+            <Text style={styles.buttonText}>Tutorial</Text>
+          </Link>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Link href="/(tabs)/spellOptions">
+            <Text style={styles.buttonText}>Create a Spell</Text>
+          </Link>
+        </TouchableOpacity>
       </ImageBackground>
     </View>
   );
@@ -41,6 +59,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+    marginHorizontal: "1.5%",
   },
   image: {
     width: "100%",
@@ -48,5 +67,27 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "center",
+  },
+  button: {
+    backgroundColor: "red", // Red background
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 10,
+    marginVertical: "1.5%",
+    marginHorizontal: "15%",
+  },
+  buttonTutorial: {
+    backgroundColor: "purple", // Red background
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 10,
+    marginVertical: "5%",
+    marginHorizontal: "15%",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 28,
+    textAlign: "center",
+    fontWeight: "bold", // Bold text
   },
 });

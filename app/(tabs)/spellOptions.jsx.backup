@@ -9,42 +9,34 @@ import React, { useState, useRef } from "react";
 import Popover from "react-native-popover-view";
 
 const spellOptions = () => {
-  //------------------------ Display Variables ------------------------//
-  // const [damageDisplay, setDamageDisplay] = useState("");
-  const [spellLevel, setSpellLevel] = useState(0);
+  const [damage, setDamage] = useState(0);
+  const [damageLevel, setDamageLevel] = useState(0);
+  const [aoe, setAoe] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [effect, setEffect] = useState(0);
+  const [damageValue, setDamageValue] = useState(1);
+  const [isDamage, setIsDamage] = useState(false);
+  const [isRanged, setIsRanged] = useState(true);
+  const [isAoe, setIsAoe] = useState(false);
+  const [isDuration, setIsDuration] = useState(false);
+  const [isEffect, setIsEffect] = useState(false);
+  const [allowDamage, setAllowDamage] = useState(true);
+  const [allowAoe, setAllowAoe] = useState(true);
+  const [allowDuration, setAllowDuration] = useState(true);
+  const [damageSize, setDamageSize] = useState(8);
+  const [damageRange, setDamageRange] = useState("120 feet");
   const [damageDeets, setDamageDeets] = useState("");
+  const [damageDisplay, setDamageDisplay] = useState("");
   const [aoeDeets, setAoeDeets] = useState("single target");
   const [durationDeets, setDurationDeets] = useState("instantaneous");
   const [effectDeets, setEffectDeets] = useState("");
   const [effectDeetsShort, setEffectDeetsShort] = useState("");
   const [saveType, setSaveType] = useState("Dexterity");
   const [damageType, setDamageType] = useState("");
-  const [damageRange, setDamageRange] = useState("120 feet");
-  //------------------------ Damage Variables ------------------------//
-  const [damageDieAmount, setDamageDieAmount] = useState(0);
-  const [damageSize, setDamageSize] = useState(8);
-  const [flatDamage, setFlatDamage] = useState(0);
-  const [useAbilityModifier, setUseAbilityModifier] = useState(false);
-  const [isDisabledUseAbilityModifier, setIsDisabledUseAbilityModifier] =
-    useState(false);
-  const [spellDamageBonus, setSpellDamageBonus] = useState(1);
-  const [spellRangeBonus, setSpellRangeBonus] = useState(0);
-  //------------------- Spell Identifier Variables -------------------//
-  const [isDamage, setIsDamage] = useState(false);
-  const [isRanged, setIsRanged] = useState(true);
-  const [isAoe, setIsAoe] = useState(false);
-  const [isDuration, setIsDuration] = useState(false);
-  const [isEffect, setIsEffect] = useState(false);
-  //--------------- Spell Effect Permissions Variables ---------------//
-  const [allowDamage, setAllowDamage] = useState(true);
-  const [allowAoe, setAllowAoe] = useState(true);
-  const [allowDuration, setAllowDuration] = useState(true);
-  //------------------- Spell Effect Type Variables -------------------//
-  const [duration, setDuration] = useState(0);
-  const [aoe, setAoe] = useState(0);
-  const [effect, setEffect] = useState(0);
-  //------------------------ Button Variables ------------------------//
-  const [isSelectedDamageRange1, setIsSelectedDamageRange1] = useState(true);
+  const [isDamageTypePlus, setIsDamageTypePlus] = useState(false);
+  const [isDamageTypeNeutral, setIsDamageTypeNeutral] = useState(true);
+  const [isDamageTypeMinus, setIsDamageTypeMinus] = useState(false);
+  const [isSelectedDamageRange1, setIsSelectedDamageRange1] = useState(false);
   const [isSelectedDamageRange2, setIsSelectedDamageRange2] = useState(false);
   const [isSelectedDamageType1, setIsSelectedDamageType1] = useState(false);
   const [isSelectedDamageType2, setIsSelectedDamageType2] = useState(false);
@@ -61,33 +53,6 @@ const spellOptions = () => {
   const [isSelectedAoe3, setIsSelectedAoe3] = useState(false);
   const [isSelectedAoe4, setIsSelectedAoe4] = useState(false);
   const [isSelectedDuration1, setIsSelectedDuration1] = useState(false);
-  const [isDisabledIncreaseSize, setIsDisabledIncreaseSize] = useState(false);
-  const [isDisabledDecreaseSize, setIsDisabledDecreaseSize] = useState(false);
-  const [isDisabledDecreaseFlatBonus, setIsDisabledDecreaseFlatBonus] =
-    useState(true);
-  const [isDisabledIncreaseFlatBonus, setIsDisabledIncreaseFlatBonus] =
-    useState(false);
-  const [isDisabledDecreaseDamageAmount, setIsDisabledDecreaseDamageAmount] =
-    useState(true);
-  const [isDisabledIncreaseDamageAmount, setIsDisabledIncreaseDamageAmount] =
-    useState(false);
-  const [isDisabledDamageRange1, setIsDisabledDamageRange1] = useState(false);
-  const [isDisabledDamageRange2, setIsDisabledDamageRange2] = useState(false);
-  const [isDisabledDamageType1, setIsDisabledDamageType1] = useState(false);
-  const [isDisabledDamageType2, setIsDisabledDamageType2] = useState(false);
-  const [isDisabledDamageType3, setIsDisabledDamageType3] = useState(false);
-  const [isDisabledDamageType4, setIsDisabledDamageType4] = useState(false);
-  const [isDisabledDamageType5, setIsDisabledDamageType5] = useState(false);
-  const [isDisabledDamageType6, setIsDisabledDamageType6] = useState(false);
-  const [isDisabledDamageType7, setIsDisabledDamageType7] = useState(false);
-  const [isDisabledDamageType8, setIsDisabledDamageType8] = useState(false);
-  const [isDisabledDamageType9, setIsDisabledDamageType9] = useState(false);
-  const [isDisabledDamageType10, setIsDisabledDamageType10] = useState(false);
-  const [isDisabledAoe1, setIsDisabledAoe1] = useState(false);
-  const [isDisabledAoe2, setIsDisabledAoe2] = useState(false);
-  const [isDisabledAoe3, setIsDisabledAoe3] = useState(false);
-  const [isDisabledAoe4, setIsDisabledAoe4] = useState(false);
-  const [isDisabledDuration1, setIsDisabledDuration1] = useState(false);
   const [isSelectedEffect1, setIsSelectedEffect1] = useState(false);
   const [isSelectedEffect2, setIsSelectedEffect2] = useState(false);
   const [isSelectedEffect3, setIsSelectedEffect3] = useState(false);
@@ -106,365 +71,58 @@ const spellOptions = () => {
   const [isSelectedEffect16, setIsSelectedEffect16] = useState(false);
   const [isSelectedEffect17, setIsSelectedEffect17] = useState(false);
   const [isSelectedEffect18, setIsSelectedEffect18] = useState(false);
+  const [isDisabledIncrease, setIsDisabledIncrease] = useState(false);
+  const [isDisabledDecrease, setIsDisabledDecrease] = useState(true);
+  const [isSpellIntroPopupVisible, setIsSpellIntroPopupVisible] =
+    useState(true);
+  const [isSpellLevelPopupVisible, setIsSpellLevelPopupVisible] =
+    useState(false);
+  const [isSpellResetPopupVisible, setIsSpellResetPopupVisible] =
+    useState(false);
+  const [isSpellDamagePickerPopupVisible, setIsSpellDamagePickerPopupVisible] =
+    useState(false);
+  const [isSpellDamageTypePopupVisible, setIsSpellDamageTypePopupVisible] =
+    useState(false);
+  const [isSpellDamageRangePopupVisible, setIsSpellDamageRangePopupVisible] =
+    useState(false);
+  const [isSpellAoePopupVisible, setIsSpellAoePopupVisible] = useState(false);
+  const [isSpellDurationPopupVisible, setIsSpellDurationPopupVisible] =
+    useState(false);
+  const [
+    isSpellEffectGeneralPopupVisible,
+    setIsSpellEffectGeneralPopupVisible,
+  ] = useState(false);
+  const [
+    isSpellEffectExamplePopupVisible,
+    setIsSpellEffectExamplePopupVisible,
+  ] = useState(false);
+  const [isSpellEndPopupVisible, setIsSpellEndPopupVisible] = useState(false);
+  const [spellLevel, setSpellLevel] = useState(0);
+  const [flatDamage, setFlatDamage] = useState(0);
+  const [spellDamageBonus, setSpellDamageBonus] = useState(0);
+  const spellAoe = useRef();
+  const spellDamagePicker = useRef();
+  const spellDamageRange = useRef();
+  const spellDamageType = useRef();
+  const spellDuration = useRef();
+  const spellEffectExample = useRef();
+  const spellEffectGeneral = useRef();
+  const spellEnd = useRef();
+  const spellIntro = useRef();
+  const spellLevelDisplay = useRef();
+  const spellReset = useRef();
 
-  //------------------------ Popop Visibility ------------------------//
-  // const [isSpellIntroPopupVisible, setIsSpellIntroPopupVisible] =
-  //   useState(true);
-  // const [isSpellLevelPopupVisible, setIsSpellLevelPopupVisible] =
-  //   useState(false);
-  // const [isSpellResetPopupVisible, setIsSpellResetPopupVisible] =
-  //   useState(false);
-  // const [isSpellDamagePickerPopupVisible, setIsSpellDamagePickerPopupVisible] =
-  //   useState(false);
-  // const [isSpellDamageTypePopupVisible, setIsSpellDamageTypePopupVisible] =
-  //   useState(false);
-  // const [isSpellDamageRangePopupVisible, setIsSpellDamageRangePopupVisible] =
-  //   useState(false);
-  // const [isSpellAoePopupVisible, setIsSpellAoePopupVisible] = useState(false);
-  // const [isSpellDurationPopupVisible, setIsSpellDurationPopupVisible] =
-  //   useState(false);
-  // const [
-  //   isSpellEffectGeneralPopupVisible,
-  //   setIsSpellEffectGeneralPopupVisible,
-  // ] = useState(false);
-  // const [
-  //   isSpellEffectExamplePopupVisible,
-  //   setIsSpellEffectExamplePopupVisible,
-  // ] = useState(false);
-  // const [isSpellEndPopupVisible, setIsSpellEndPopupVisible] = useState(false);
-
-  //------------------------ Popop References ------------------------//
-  // const spellAoe = useRef();
-  // const spellDamagePicker = useRef();
-  // const spellDamageRange = useRef();
-  // const spellDamageType = useRef();
-  // const spellDuration = useRef();
-  // const spellEffectExample = useRef();
-  // const spellEffectGeneral = useRef();
-  // const spellEnd = useRef();
-  // const spellIntro = useRef();
-  // const spellLevelDisplay = useRef();
-  // const spellReset = useRef();
-
-  //--------------------- Spell Level Calculation ---------------------//
-  const calculateSpellLevel = (
-    aoe,
-    duration,
-    effect,
-    damageSize,
-    damageDieAmount,
-    flatDamage,
-    spellDamageBonus,
-    spellRangeBonus,
-    damageType,
-    isDamage,
-    useAbilityModifier
-  ) => {
-    console.log(isDamage);
-
-    let level;
-    let damageDisplay;
-    let damage;
-    let modifier = aoe + duration + effect;
-    if (isDamage) {
-      if (!useAbilityModifier) {
-        damage =
-          ((damageSize / 2 + 0.5) * damageDieAmount + flatDamage) *
-          (1 - (spellDamageBonus - 1 + spellRangeBonus) * 0.05);
-      } else {
-        damage =
-          ((damageSize / 2 + 0.5) * damageDieAmount + 3.5) *
-          (1 - (spellDamageBonus - 1 + spellRangeBonus) * 0.05);
-      }
-      if (modifier === 0) {
-        if (damage < 7) {
-          level = 0;
-        } else if (damage < 14) {
-          level = 1;
-        } else if (damage < 22.5) {
-          level = 2;
-        } else if (damage < 30.5) {
-          level = 3;
-        } else if (damage < 40.5) {
-          level = 4;
-        } else if (damage < 55.5) {
-          level = 5;
-        } else if (damage < 70.5) {
-          level = 6;
-        } else if (damage < 85.5) {
-          level = 7;
-        } else if (damage < 100.5) {
-          level = 8;
-        } else if (damage <= 120) {
-          level = 9;
-        } else {
-          level = "Spell level above 9";
-        }
-      } else if (modifier === 1) {
-        if (damage < 5) {
-          level = 0;
-        } else if (damage < 12.5) {
-          level = 1;
-        } else if (damage < 20) {
-          level = 2;
-        } else if (damage < 28) {
-          level = 3;
-        } else if (damage < 38) {
-          level = 4;
-        } else if (damage < 52) {
-          level = 5;
-        } else if (damage < 67) {
-          level = 6;
-        } else if (damage < 82) {
-          level = 7;
-        } else if (damage < 96) {
-          level = 8;
-        } else if (damage <= 115) {
-          level = 9;
-        } else {
-          level = "Spell level above 9";
-        }
-      } else if (modifier === 2) {
-        if (damage < 8.5) {
-          level = 1;
-        } else if (damage < 16) {
-          level = 2;
-        } else if (damage < 24) {
-          level = 3;
-        } else if (damage < 34) {
-          level = 4;
-        } else if (damage < 48) {
-          level = 5;
-        } else if (damage < 63) {
-          level = 6;
-        } else if (damage < 78) {
-          level = 7;
-        } else if (damage < 92) {
-          level = 8;
-        } else if (damage <= 111) {
-          level = 9;
-        } else {
-          level = "Spell level above 9";
-        }
-      } else if (modifier === 3) {
-        if (damage < 5) {
-          level = 1;
-        } else if (damage < 12.5) {
-          level = 2;
-        } else if (damage < 20.5) {
-          level = 3;
-        } else if (damage < 30.5) {
-          level = 4;
-        } else if (damage < 44.5) {
-          level = 5;
-        } else if (damage < 59.5) {
-          level = 6;
-        } else if (damage < 74.5) {
-          level = 7;
-        } else if (damage < 88.5) {
-          level = 8;
-        } else if (damage <= 108.5) {
-          level = 9;
-        } else {
-          level = "Spell level above 9";
-        }
-      } else if (modifier >= 4) {
-        if (damage < 8.5) {
-          level = 2;
-        } else if (damage < 16.5) {
-          level = 3;
-        } else if (damage < 26.5) {
-          level = 4;
-        } else if (damage < 40.5) {
-          level = 5;
-        } else if (damage < 55.5) {
-          level = 6;
-        } else if (damage < 70.5) {
-          level = 7;
-        } else if (damage < 84.5) {
-          level = 8;
-        } else if (damage <= 104.5) {
-          level = 9;
-        } else {
-          level = "Spell level above 9";
-        }
-      }
-      if (flatDamage !== 0) {
-        damageDisplay =
-          damageDieAmount +
-          "d" +
-          damageSize +
-          "+" +
-          flatDamage +
-          " " +
-          damageType;
-      } else if (useAbilityModifier) {
-        damageDisplay =
-          damageDieAmount +
-          "d" +
-          damageSize +
-          " " +
-          "+" +
-          " " +
-          "Spell Modifer" +
-          " " +
-          damageType;
-      } else {
-        damageDisplay = damageDieAmount + "d" + damageSize + " " + damageType;
-      }
-      setDamageDeets(damageDisplay);
-    } else if (!isDamage) {
-      let modifier = aoe + duration + effect;
-      if (!isNaN(modifier)) {
-        level = Number(modifier);
-      } else {
-        level = 0;
-      }
-      setDamageDeets("");
-    }
-    setSpellLevel(Number(level));
-  };
-  //----------------------------Reset Func-----------------------------//
-  resetDamage = () => {
-    setDamageDeets("");
-    setDamageType("");
-    setDamageDieAmount(0);
-    setDamageSize(8);
-    setFlatDamage(0);
-    setUseAbilityModifier(false);
-    setSpellRangeBonus(0);
-    setIsDisabledIncreaseSize(false);
-    setIsDisabledDecreaseSize(false);
-    setIsDisabledDecreaseFlatBonus(true);
-    setIsDisabledDecreaseDamageAmount(true);
+  const resetDamage = () => {
+    setDamage(0);
+    setDamageLevel(0);
+    setDamageValue(1);
     setIsDamage(false);
-  };
-  disallowDamage = () => {
-    setDamageDeets("");
-    setDamageType("");
-    setDamageDieAmount(0);
-    setDamageSize(8);
-    setFlatDamage(0);
-    setUseAbilityModifier(false);
-    setSpellRangeBonus(0);
-    setIsDamage(false);
-    setIsDisabledUseAbilityModifier(true);
-    setIsDisabledIncreaseSize(true);
-    setIsDisabledDecreaseSize(true);
-    setIsDisabledIncreaseFlatBonus(true);
-    setIsDisabledDecreaseFlatBonus(true);
-    setIsDisabledIncreaseDamageAmount(true);
-    setIsDisabledDecreaseDamageAmount(true);
-    setIsDisabledDamageRange1(true);
-    setIsDisabledDamageRange2(true);
-    setIsDisabledDamageType1(true);
-    setIsDisabledDamageType2(true);
-    setIsDisabledDamageType3(true);
-    setIsDisabledDamageType4(true);
-    setIsDisabledDamageType5(true);
-    setIsDisabledDamageType6(true);
-    setIsDisabledDamageType7(true);
-    setIsDisabledDamageType8(true);
-    setIsDisabledDamageType9(true);
-    setIsDisabledDamageType10(true);
-  };
-  reallowDamage = () => {
-    setIsDisabledUseAbilityModifier(false);
-    setIsDisabledIncreaseSize(false);
-    setIsDisabledDecreaseSize(false);
-    setIsDisabledIncreaseFlatBonus(false);
-    setIsDisabledDecreaseFlatBonus(true);
-    setIsDisabledIncreaseDamageAmount(false);
-    setIsDisabledDecreaseDamageAmount(true);
-    setIsDisabledDamageRange1(false);
-    setIsDisabledDamageRange2(false);
-    setIsDisabledDamageType1(false);
-    setIsDisabledDamageType2(false);
-    setIsDisabledDamageType3(false);
-    setIsDisabledDamageType4(false);
-    setIsDisabledDamageType5(false);
-    setIsDisabledDamageType6(false);
-    setIsDisabledDamageType7(false);
-    setIsDisabledDamageType8(false);
-    setIsDisabledDamageType9(false);
-    setIsDisabledDamageType10(false);
-  };
-  resetAoe = () => {
-    setAoe(0);
-    setIsAoe(false);
-    setAoeDeets("single target");
-    setIsSelectedAoe1(false);
-    setIsSelectedAoe2(false);
-    setIsSelectedAoe3(false);
-    setIsSelectedAoe4(false);
-  };
-  reallowAoe = () => {
-    setIsDisabledAoe1(false);
-    setIsDisabledAoe2(false);
-    setIsDisabledAoe3(false);
-    setIsDisabledAoe4(false);
-  };
-  disallowAoe = () => {
-    setAoe(0);
-    setIsAoe(false);
-    setAoeDeets("single target");
-    setIsSelectedAoe1(false);
-    setIsSelectedAoe2(false);
-    setIsSelectedAoe3(false);
-    setIsSelectedAoe4(false);
-    setIsDisabledAoe1(true);
-    setIsDisabledAoe2(true);
-    setIsDisabledAoe3(true);
-    setIsDisabledAoe4(true);
-  };
-  resetDuration = () => {
-    setDuration(0);
-    setIsDuration(false);
-    setDurationDeets("instantaneous");
-    setIsSelectedDuration1(false);
-  };
-  reallowDuration = () => {
-    setIsDisabledDuration1(false);
-  };
-  disallowDuration = () => {
-    setDuration(0);
-    setIsDuration(false);
-    setDurationDeets("instantaneous");
-    setIsSelectedDuration1(false);
-    setIsDisabledDuration1(true);
-  };
-  resetSpell = () => {
-    setSpellLevel(0);
-    setDamageDeets("");
-    setAoeDeets("single target");
-    setDurationDeets("instantaneous");
-    setEffectDeets("");
-    setEffectDeetsShort("");
-    setSaveType("Dexterity");
-    setDamageType("");
-    setDamageRange("120 feet");
-    setDamageDieAmount(0);
-    setDamageSize(8);
-    setFlatDamage(0);
-    setUseAbilityModifier(false);
-    setSpellDamageBonus(1);
-    setSpellRangeBonus(0);
-    setIsDisabledIncreaseSize(false);
-    setIsDisabledDecreaseSize(false);
-    setIsDisabledDecreaseFlatBonus(true);
-    setIsDisabledDecreaseDamageAmount(true);
-    setIsDamage(false);
-    setIsRanged(false);
-    setIsAoe(false);
-    setIsDuration(false);
-    setIsEffect(false);
-    setAllowDamage(true);
+    setIsRanged(true);
     setAllowAoe(true);
-    setAllowDuration(true);
-    setDuration(0);
-    setAoe(0);
-    setEffect(0);
-    setIsSelectedDamageRange1(true);
+    setDamageDeets("");
+    setDamageDisplay("");
+    setDamageType("");
+    setIsSelectedDamageRange1(false);
     setIsSelectedDamageRange2(false);
     setIsSelectedDamageType1(false);
     setIsSelectedDamageType2(false);
@@ -476,6 +134,66 @@ const spellOptions = () => {
     setIsSelectedDamageType8(false);
     setIsSelectedDamageType9(false);
     setIsSelectedDamageType10(false);
+    setIsDamageTypePlus(false);
+    setIsDamageTypeNeutral(true);
+    setIsDamageTypeMinus(false);
+    setIsDisabledIncrease(false);
+    setIsDisabledDecrease(true);
+  };
+  const resetAoe = () => {
+    setAoe(0);
+    setIsAoe(false);
+    setAoeDeets("single target");
+    setIsSelectedAoe1(false);
+    setIsSelectedAoe2(false);
+    setIsSelectedAoe3(false);
+    setIsSelectedAoe4(false);
+  };
+  const resetDuration = () => {
+    setDuration(0);
+    setIsDuration(false);
+    setDurationDeets("instantaneous");
+    setIsSelectedDuration1(false);
+  };
+  const resetSpell = () => {
+    setDamage(0);
+    setDamageLevel(0);
+    setAoe(0);
+    setDuration(0);
+    setEffect(0);
+    setDamageValue(1);
+    setIsDamage(false);
+    setIsRanged(true);
+    setIsAoe(false);
+    setIsDuration(false);
+    setIsEffect(false);
+    setAllowDamage(true);
+    setAllowAoe(true);
+    setAllowDuration(true);
+    setDamageSize(8);
+    setDamageRange("120 feet");
+    setDamageDeets("");
+    setDamageDisplay("");
+    setAoeDeets("single target");
+    setDurationDeets("instantaneous");
+    setEffectDeets("");
+    setSaveType("Dexterity");
+    setDamageType("");
+    setIsSelectedDamageRange1(false);
+    setIsSelectedDamageRange2(false);
+    setIsSelectedDamageType1(false);
+    setIsSelectedDamageType2(false);
+    setIsSelectedDamageType3(false);
+    setIsSelectedDamageType4(false);
+    setIsSelectedDamageType5(false);
+    setIsSelectedDamageType6(false);
+    setIsSelectedDamageType7(false);
+    setIsSelectedDamageType8(false);
+    setIsSelectedDamageType9(false);
+    setIsSelectedDamageType10(false);
+    setIsDamageTypePlus(false);
+    setIsDamageTypeNeutral(true);
+    setIsDamageTypeMinus(false);
     setIsSelectedAoe1(false);
     setIsSelectedAoe2(false);
     setIsSelectedAoe3(false);
@@ -499,73 +217,238 @@ const spellOptions = () => {
     setIsSelectedEffect16(false);
     setIsSelectedEffect17(false);
     setIsSelectedEffect18(false);
-    setIsDisabledUseAbilityModifier(false);
-    setIsDisabledIncreaseSize(false);
-    setIsDisabledDecreaseSize(false);
-    setIsDisabledDecreaseFlatBonus(true);
-    setIsDisabledIncreaseFlatBonus(false);
-    setIsDisabledDecreaseDamageAmount(true);
-    setIsDisabledIncreaseDamageAmount(false);
-    setIsDisabledDamageRange1(false);
-    setIsDisabledDamageRange2(false);
-    setIsDisabledDamageType1(false);
-    setIsDisabledDamageType2(false);
-    setIsDisabledDamageType3(false);
-    setIsDisabledDamageType4(false);
-    setIsDisabledDamageType5(false);
-    setIsDisabledDamageType6(false);
-    setIsDisabledDamageType7(false);
-    setIsDisabledDamageType8(false);
-    setIsDisabledDamageType9(false);
-    setIsDisabledDamageType10(false);
-    setIsDisabledAoe1(false);
-    setIsDisabledAoe2(false);
-    setIsDisabledAoe3(false);
-    setIsDisabledAoe4(false);
-    setIsDisabledDuration1(false);
+    setIsDisabledIncrease(false);
+    setIsDisabledDecrease(true);
+  };
+  //------------------- Spell Level Calculation -------------------//
+  const calculateSpellLevel = () => {
+    let level;
+    let damage =
+      (damageSize / 2 + 0.5) * damageValue + flatDamage - spellDamageBonus;
+    let modifier = aoe + duration + effect;
+    if (!isDamage) {
+      level = modifier;
+    } else if (isDamage && modifier === 0) {
+      if (damage < 7) {
+        level = 0;
+      } else if (damage < 14) {
+        level = 1;
+      } else if (damage < 22.5) {
+        level = 2;
+      } else if (damage < 30.5) {
+        level = 3;
+      } else if (damage < 40.5) {
+        level = 4;
+      } else if (damage < 55.5) {
+        level = 5;
+      } else if (damage < 70.5) {
+        level = 6;
+      } else if (damage < 85.5) {
+        level = 7;
+      } else if (damage < 100.5) {
+        level = 8;
+      } else if (damage <= 120) {
+        level = 9;
+      } else {
+        level = "Spell level above 9";
+      }
+    } else if (isDamage && modifier === 1) {
+      if (damage < 5) {
+        level = 0;
+      } else if (damage < 12.5) {
+        level = 1;
+      } else if (damage < 20) {
+        level = 2;
+      } else if (damage < 28) {
+        level = 3;
+      } else if (damage < 38) {
+        level = 4;
+      } else if (damage < 52) {
+        level = 5;
+      } else if (damage < 67) {
+        level = 6;
+      } else if (damage < 82) {
+        level = 7;
+      } else if (damage < 96) {
+        level = 8;
+      } else if (damage <= 115) {
+        level = 9;
+      } else {
+        level = "Spell level above 9";
+      }
+    } else if (isDamage && modifier === 2) {
+      if (damage < 8.5) {
+        level = 1;
+      } else if (damage < 16) {
+        level = 2;
+      } else if (damage < 24) {
+        level = 3;
+      } else if (damage < 34) {
+        level = 4;
+      } else if (damage < 48) {
+        level = 5;
+      } else if (damage < 63) {
+        level = 6;
+      } else if (damage < 78) {
+        level = 7;
+      } else if (damage < 92) {
+        level = 8;
+      } else if (damage <= 111) {
+        level = 9;
+      } else {
+        level = "Spell level above 9";
+      }
+    } else if (isDamage && modifier === 3) {
+      if (damage < 5) {
+        level = 1;
+      } else if (damage < 12.5) {
+        level = 2;
+      } else if (damage < 20.5) {
+        level = 3;
+      } else if (damage < 30.5) {
+        level = 4;
+      } else if (damage < 44.5) {
+        level = 5;
+      } else if (damage < 59.5) {
+        level = 6;
+      } else if (damage < 74.5) {
+        level = 7;
+      } else if (damage < 88.5) {
+        level = 8;
+      } else if (damage <= 108.5) {
+        level = 9;
+      } else {
+        level = "Spell level above 9";
+      }
+    } else if (isDamage && modifier >= 4) {
+      if (damage < 8.5) {
+        level = 2;
+      } else if (damage < 16.5) {
+        level = 3;
+      } else if (damage < 26.5) {
+        level = 4;
+      } else if (damage < 40.5) {
+        level = 5;
+      } else if (damage < 55.5) {
+        level = 6;
+      } else if (damage < 70.5) {
+        level = 7;
+      } else if (damage < 84.5) {
+        level = 8;
+      } else if (damage <= 104.5) {
+        level = 9;
+      } else {
+        level = "Spell level above 9";
+      }
+    } else {
+      level = 0;
+    }
+    setSpellLevel(level);
   };
   //--------------------------- Damage ---------------------------//
   const changeDamageType = (type, damageMod, isSelected) => {
     let newSize;
     if (!isSelected) {
+      if (damageMod === 0) {
+        setIsDamageTypeNeutral(true);
+        setIsDamageTypeMinus(false);
+        setIsDamageTypePlus(false);
+      } else if (damageMod > 0) {
+        setIsDamageTypeNeutral(false);
+        setIsDamageTypeMinus(false);
+        setIsDamageTypePlus(true);
+      } else {
+        setIsDamageTypeNeutral(false);
+        setIsDamageTypeMinus(true);
+        setIsDamageTypePlus(false);
+      }
       setDamageType(type);
-      setSpellDamageBonus(damageMod);
-      calculateSpellLevel(
-        aoe,
-        duration,
-        effect,
-        damageSize,
-        damageDieAmount,
-        flatDamage,
-        damageMod,
-        spellRangeBonus,
-        type,
-        isDamage,
-        useAbilityModifier
-      );
+      if (
+        (damageMod < 0 && isDamageTypeNeutral) ||
+        (damageMod === 0 && isDamageTypePlus)
+      ) {
+        newSize = damageSize - 2;
+        setDamageSize(newSize);
+        if (damageValue > 0 && allowDamage && isDamage) {
+          setDamageDeets("d" + newSize);
+          setDamageDisplay(damageValue + "d" + newSize);
+        }
+      } else if (
+        (damageMod > 0 && isDamageTypeNeutral) ||
+        (damageMod === 0 && isDamageTypeMinus)
+      ) {
+        newSize = damageSize + 2;
+        setDamageSize(newSize);
+        if (damageValue > 0 && allowDamage && isDamage) {
+          setDamageDeets("d" + newSize);
+          setDamageDisplay(damageValue + "d" + newSize);
+        }
+      } else if (damageMod > 0 && isDamageTypeMinus) {
+        newSize = damageSize + 4;
+        setDamageSize(newSize);
+        if (damageValue > 0 && allowDamage && isDamage) {
+          setDamageDeets("d" + newSize);
+          setDamageDisplay(damageValue + "d" + newSize);
+        }
+      } else if (damageMod < 0 && isDamageTypePlus) {
+        newSize = damageSize - 4;
+        setDamageSize(newSize);
+        if (damageValue > 0 && allowDamage && isDamage) {
+          setDamageDeets("d" + newSize);
+          setDamageDisplay(damageValue + "d" + newSize);
+        }
+      }
     } else {
       setDamageType("");
-      setSpellDamageBonus(1);
-      calculateSpellLevel(
-        aoe,
-        duration,
-        effect,
-        damageSize,
-        damageDieAmount,
-        flatDamage,
-        1,
-        spellRangeBonus,
-        "",
-        isDamage,
-        useAbilityModifier
-      );
+      setIsDamageTypeMinus(false);
+      setIsDamageTypeNeutral(true);
+      setIsDamageTypePlus(false);
+      if (damageMod < 0) {
+        newSize = damageSize + 2;
+        setDamageSize(newSize);
+        if (damageValue > 0 && allowDamage && isDamage) {
+          setDamageDeets("d" + newSize);
+          setDamageDisplay(damageValue + "d" + newSize);
+        }
+      } else if (damageMod > 0) {
+        newSize = damageSize - 2;
+        setDamageSize(newSize);
+        if (damageValue > 0 && allowDamage && isDamage) {
+          setDamageDeets("d" + newSize);
+          setDamageDisplay(damageValue + "d" + newSize);
+        }
+      }
     }
   };
-  const changeRange = (range, isSelected) => {
+  const changeDamage = (size, range, isSelected) => {
     if (!isSelected) {
+      let newSize;
       if (allowDamage) {
+        setIsDamage(true);
+        if (isAoe && isDamageTypeMinus) {
+          setDamageSize(size - 4);
+          newSize = size - 4;
+        } else if (
+          (isAoe && !isDamageTypeMinus && !isDamageTypePlus) ||
+          (!isAoe && isDamageTypeMinus && !isDamageTypePlus)
+        ) {
+          setDamageSize(size - 2);
+          newSize = size - 2;
+        } else if (!isAoe && !isDamageTypeMinus && isDamageTypePlus) {
+          setDamageSize(size + 2);
+          newSize = size + 2;
+        } else {
+          setDamageSize(size);
+          newSize = size;
+        }
+        setDamageRange(range);
+        let text = "d" + newSize;
         setIsRanged(range);
-        setSpellRangeBonus(range);
+        setDamage(damageLevel);
+        setDamageDeets(text);
+        if (damageValue !== 0) {
+          setDamageDisplay(damageValue + text);
+        }
         if (range && isAoe) {
           setDamageRange("60 feet");
         } else if (range && !isAoe) {
@@ -573,230 +456,67 @@ const spellOptions = () => {
         } else {
           setDamageRange("touch");
         }
-        calculateSpellLevel(
-          aoe,
-          duration,
-          effect,
-          damageSize,
-          damageDieAmount,
-          flatDamage,
-          spellDamageBonus,
-          range,
-          damageType,
-          isDamage,
-          useAbilityModifier
-        );
       }
     } else {
-      setSpellRangeBonus(!range);
-      if (!range) {
-        if (isAoe) {
-          setDamageRange("60 feet");
-        } else {
-          setDamageRange("120 feet");
-        }
+      setIsDamage(false);
+      setDamageDeets("");
+      setDamageDisplay("");
+      setDamage(0);
+      if (isAoe) {
+        setDamageRange("60 feet");
       } else {
-        setDamageRange("Touch");
+        setDamageRange("120 feet");
       }
-      calculateSpellLevel(
-        aoe,
-        duration,
-        effect,
-        damageSize,
-        damageDieAmount,
-        flatDamage,
-        spellDamageBonus,
-        !range,
-        damageType,
-        isDamage,
-        useAbilityModifier
-      );
     }
   };
   const increaseDamage = () => {
-    if (allowDamage) {
-      if (damageDieAmount === 0) {
-        setIsDisabledDecreaseDamageAmount(false);
-        setIsDamage(true);
+    if (!isDisabledIncrease) {
+      let damage;
+      let level;
+      if (damageLevel === 0) {
+        setIsDisabledDecrease(false);
+        setDamageValue(damageValue + 1);
+        damage = damageValue + 1;
+      } else {
+        if (damageLevel === 8) {
+          setIsDisabledIncrease(true);
+        }
+        setDamageValue(damageValue + 2);
+        damage = damageValue + 2;
       }
-      setDamageDieAmount(damageDieAmount + 1);
+      setDamageLevel(damageLevel + 1);
+      level = damageLevel + 1;
+      if (isDamage && damageValue > 0) {
+        setDamage(level);
+        setDamageDisplay(damage + damageDeets);
+      }
     }
-    calculateSpellLevel(
-      aoe,
-      duration,
-      effect,
-      damageSize,
-      damageDieAmount + 1,
-      flatDamage,
-      spellDamageBonus,
-      spellRangeBonus,
-      damageType,
-      true,
-      useAbilityModifier
-    );
   };
   const decreaseDamage = () => {
-    if (!isDisabledDecreaseDamageAmount) {
-      if (damageDieAmount === 1) {
-        setIsDisabledDecreaseDamageAmount(true);
-        setIsDamage(false);
-        calculateSpellLevel(
-          aoe,
-          duration,
-          effect,
-          damageSize,
-          0,
-          flatDamage,
-          spellDamageBonus,
-          spellRangeBonus,
-          damageType,
-          false,
-          useAbilityModifier
-        );
+    if (!isDisabledDecrease) {
+      let damage;
+      let level;
+      if (damageLevel === 9) {
+        setIsDisabledIncrease(false);
+      }
+      if (damageLevel <= 1) {
+        setDamageValue(damageValue - 1);
+        setIsDisabledDecrease(true);
+        damage = damageValue - 1;
       } else {
-        calculateSpellLevel(
-          aoe,
-          duration,
-          effect,
-          damageSize,
-          damageDieAmount - 1,
-          flatDamage,
-          spellDamageBonus,
-          spellRangeBonus,
-          damageType,
-          isDamage,
-          useAbilityModifier
-        );
+        setDamageValue(damageValue - 2);
+        damage = damageValue - 2;
       }
-      setDamageDieAmount(damageDieAmount - 1);
-    }
-  };
-  const increaseDamageFlatBonus = () => {
-    if (allowDamage) {
-      if (flatDamage === 0) {
-        setIsDisabledDecreaseFlatBonus(false);
+      setDamageLevel(damageLevel - 1);
+      level = damageLevel - 1;
+      if (damage > 0) {
+        if (damageDeets !== "") {
+          setDamage(level);
+          setDamageDisplay(damage + damageDeets);
+        }
+      } else {
+        setDamageDisplay("");
       }
-      setFlatDamage(flatDamage + 1);
-      setUseAbilityModifier(false);
-      calculateSpellLevel(
-        aoe,
-        duration,
-        effect,
-        damageSize,
-        damageDieAmount,
-        flatDamage + 1,
-        spellDamageBonus,
-        spellRangeBonus,
-        damageType,
-        isDamage,
-        false
-      );
-    }
-  };
-  const decreaseDamageFlatBonus = () => {
-    if (!isDisabledDecreaseFlatBonus) {
-      if (flatDamage === 1) {
-        setIsDisabledDecreaseFlatBonus(true);
-      }
-      setFlatDamage(flatDamage - 1);
-      setUseAbilityModifier(false);
-      calculateSpellLevel(
-        aoe,
-        duration,
-        effect,
-        damageSize,
-        damageDieAmount,
-        flatDamage - 1,
-        spellDamageBonus,
-        spellRangeBonus,
-        damageType,
-        isDamage,
-        false
-      );
-    }
-  };
-  const useAbilityFlatBonus = (isSelected) => {
-    setFlatDamage(0);
-    if (!isSelected) {
-      setUseAbilityModifier(true);
-      calculateSpellLevel(
-        aoe,
-        duration,
-        effect,
-        damageSize,
-        damageDieAmount,
-        0,
-        spellDamageBonus,
-        spellRangeBonus,
-        damageType,
-        isDamage,
-        true
-      );
-      setIsDisabledDecreaseFlatBonus(true);
-    } else {
-      setUseAbilityModifier(false);
-      calculateSpellLevel(
-        aoe,
-        duration,
-        effect,
-        damageSize,
-        damageDieAmount,
-        0,
-        spellDamageBonus,
-        spellRangeBonus,
-        damageType,
-        isDamage,
-        false
-      );
-      setIsDisabledDecreaseFlatBonus(true);
-    }
-  };
-  const increaseDamageSize = () => {
-    if (!isDisabledIncreaseSize) {
-      if (damageSize === 4) {
-        setIsDisabledDecreaseSize(false);
-      }
-      if (damageSize === 10) {
-        setIsDisabledIncreaseSize(true);
-      }
-      setDamageSize(damageSize + 2);
-      calculateSpellLevel(
-        aoe,
-        duration,
-        effect,
-        damageSize + 2,
-        damageDieAmount,
-        flatDamage,
-        spellDamageBonus,
-        spellRangeBonus,
-        damageType,
-        isDamage,
-        useAbilityModifier
-      );
-    }
-  };
-  const decreaseDamageSize = () => {
-    if (!isDisabledDecreaseSize) {
-      if (damageSize === 6) {
-        setIsDisabledDecreaseSize(true);
-      }
-      if (damageSize === 12) {
-        setIsDisabledIncreaseSize(false);
-      }
-      setDamageSize(damageSize - 2);
-      calculateSpellLevel(
-        aoe,
-        duration,
-        effect,
-        damageSize - 2,
-        damageDieAmount,
-        flatDamage,
-        spellDamageBonus,
-        spellRangeBonus,
-        damageType,
-        isDamage,
-        useAbilityModifier
-      );
     }
   };
 
@@ -806,43 +526,38 @@ const spellOptions = () => {
       if (!isSelected) {
         setAoe(value);
         setAoeDeets(text);
-        setIsAoe(true);
-        if (isRanged) {
-          setDamageRange("60 feet");
+        if (!isAoe) {
+          let newSize = damageSize - 2;
+          setDamageSize(newSize);
+
+          if (damageValue > 0 && allowDamage && isDamage) {
+            setDamageDeets("d" + newSize);
+            setDamageDisplay(damageValue + "d" + newSize);
+          }
+          if (isRanged) {
+            setDamageRange("60 feet");
+          }
         }
-        calculateSpellLevel(
-          value,
-          duration,
-          effect,
-          damageSize,
-          damageDieAmount,
-          flatDamage,
-          spellDamageBonus,
-          spellRangeBonus,
-          damageType,
-          isDamage,
-          useAbilityModifier
-        );
+        setIsAoe(true);
       } else {
         setAoe(0);
-        setIsAoe(false);
-        setAoeDeets("Single Target");
-        if (isRanged) {
-          setDamageRange("120 feet");
+        if (!isDuration) {
+          setAoeDeets("single target");
+        } else {
+          setAoeDeets("5ft square");
         }
-        calculateSpellLevel(
-          0,
-          duration,
-          effect,
-          damageSize,
-          damageDieAmount,
-          flatDamage,
-          spellDamageBonus,
-          spellRangeBonus,
-          damageType,
-          isDamage,
-          useAbilityModifier
-        );
+        if (isAoe) {
+          let newSize = damageSize + 2;
+          setDamageSize(newSize);
+          if (damageValue > 0 && allowDamage && isDamage) {
+            setDamageDeets("d" + newSize);
+            setDamageDisplay(damageValue + "d" + newSize);
+          }
+          if (isRanged) {
+            setDamageRange("120 feet");
+          }
+        }
+        setIsAoe(false);
       }
     }
   };
@@ -853,42 +568,22 @@ const spellOptions = () => {
         setDuration(1);
         setDurationDeets("10 minutes");
         setIsDuration(true);
-        if (isRanged) {
-          setDamageRange("60 feet");
+        if (!isAoe) {
+          setAoeDeets("single target or 5ft square");
+          if (isRanged) {
+            setDamageRange("60 feet");
+          }
         }
-        calculateSpellLevel(
-          aoe,
-          1,
-          effect,
-          damageSize,
-          damageDieAmount,
-          flatDamage,
-          spellDamageBonus,
-          spellRangeBonus,
-          damageType,
-          isDamage,
-          useAbilityModifier
-        );
       } else {
         setIsDuration(false);
         setDuration(0);
         setDurationDeets("instantaneous");
-        if (isRanged && !isEffect) {
-          setDamageRange("120 feet");
+        if (!isAoe) {
+          setAoeDeets("single target");
+          if (isRanged && !isEffect) {
+            setDamageRange("120 feet");
+          }
         }
-        calculateSpellLevel(
-          aoe,
-          0,
-          effect,
-          damageSize,
-          damageDieAmount,
-          flatDamage,
-          spellDamageBonus,
-          spellRangeBonus,
-          damageType,
-          isDamage,
-          useAbilityModifier
-        );
       }
     }
   };
@@ -903,77 +598,54 @@ const spellOptions = () => {
     isSelected,
     save
   ) => {
-    let area;
-    let time;
-    let size;
-    let spellEffect;
-    let amount;
-    let flat;
-    let damageBonus;
-    let rangeBonus;
-    let type;
-    let damageStatus;
-    let ability;
-
     if (!isSelected) {
-      spellEffect = value;
       setSaveType(save);
       setEffect(value);
       setEffectDeets(text);
       setEffectDeetsShort(shortText);
-      if (isRanged) {
-        setDamageRange("60 feet");
-      }
       if (!isEffect) {
         setIsEffect(true);
+        let damage = damageLevel - 1;
+        setDamageLevel(damage);
+        if (damageLevel === 1 || !isDamage) {
+          setDamageDisplay("");
+        } else {
+          setDamageValue(damage);
+          setDamageDisplay(damage + damageDeets);
+        }
+        setDamageRange("60 feet");
       }
       if (damageAllow) {
         setAllowDamage(true);
-        reallowDamage();
-        size = damageSize;
-        amount = damageDieAmount;
-        flat = flatDamage;
-        damageBonus = spellDamageBonus;
-        rangeBonus = spellRangeBonus;
-        type = damageType;
-        damageStatus = isDamage;
-        ability = useAbilityModifier;
       }
       if (aoeAllow) {
         setAllowAoe(true);
-        reallowAoe();
-        area = aoe;
       }
       if (durationAllow) {
         setAllowDuration(true);
-        reallowDuration();
-        time = duration;
       }
       if (!damageAllow) {
         setAllowDamage(false);
-        disallowDamage();
-        size = 8;
-        amount = 0;
-        flat = 0;
-        damageBonus = 1;
-        rangeBonus = 0;
-        type = "";
-        damageStatus = false;
-        ability = false;
+        resetDamage();
       }
       if (!aoeAllow) {
         setAllowAoe(false);
-        disallowAoe();
-        area = 0;
+        resetAoe();
       }
       if (!durationAllow) {
         setAllowDuration(false);
-        disallowDuration();
-        time = 0;
+        resetDuration();
       }
     } else {
-      spellEffect = 0;
       setIsEffect(false);
+      let damage = damageLevel + 1;
+      setDamageLevel(damage);
+      if (damage === 0 || !isDamage) {
+        setDamageDisplay("");
+      } else {
+        setDamageDisplay(damage + damageDeets);
+        setDamageValue(damage);
+      }
       if (!isAoe && !isDuration) {
         setDamageRange("120 feet");
       }
@@ -984,52 +656,7 @@ const spellOptions = () => {
       setEffect(0);
       setEffectDeets("");
       setEffectDeetsShort("");
-      if (!damageAllow) {
-        reallowDamage();
-        size = 8;
-        amount = 0;
-        flat = 0;
-        damageBonus = 1;
-        rangeBonus = 0;
-        type = "";
-        damageStatus = false;
-        ability = false;
-      } else {
-        size = damageSize;
-        amount = damageDieAmount;
-        flat = flatDamage;
-        damageBonus = spellDamageBonus;
-        rangeBonus = spellRangeBonus;
-        type = damageType;
-        damageStatus = isDamage;
-        ability = useAbilityModifier;
-      }
-      if (!aoeAllow) {
-        reallowAoe();
-        area = 0;
-      } else {
-        area = aoe;
-      }
-      if (!durationAllow) {
-        reallowDuration();
-        time = 0;
-      } else {
-        time = duration;
-      }
     }
-    calculateSpellLevel(
-      area,
-      time,
-      spellEffect,
-      size,
-      amount,
-      flat,
-      damageBonus,
-      rangeBonus,
-      type,
-      damageStatus,
-      ability
-    );
   };
 
   return (
@@ -1051,106 +678,32 @@ const spellOptions = () => {
         <Text style={styles.textBody}>
           Save: {saveType} {"      "}Duration: {durationDeets}
         </Text>
-        <Text style={styles.textBody}>Spell Damage: {damageDeets}</Text>
+        <Text style={styles.textBody}>
+          Spell Damage: {damageDisplay}
+          {"      "}Damage Type: {damageType}
+        </Text>
         <Text style={styles.textBody}>Spell Effect: {effectDeets}</Text>
       </ScrollView>
       <View style={styles.divider}></View>
       {/* -----------------------------*****Spell Options*****-------------------------------------*/}
       <ScrollView style={styles.scrollViewBody}>
-        {/* ---------------------------------Damage Value-----------------------------------------*/}
-        <Text style={styles.textSubtitle}>Damage: {damageDeets}</Text>
+        {/* ----------------------------------Damage Value------------------------------------------*/}
+        <Text style={styles.textSubtitle}>Damage: {damageDisplay}</Text>
         <View style={styles.rowContainer}>
-          <Text style={styles.textSubtitle}>Dice</Text>
           <TouchableOpacity
-            style={[
-              styles.button,
-              isDisabledDecreaseDamageAmount && styles.buttonSelected,
-            ]}
+            style={[styles.button, isDisabledDecrease && styles.buttonSelected]}
             onPress={() => decreaseDamage()}
-            disabled={isDisabledDecreaseDamageAmount}
+            disabled={isDisabledDecrease}
           >
             <Text style={styles.buttonText}>-</Text>
           </TouchableOpacity>
-          <Text style={styles.textSubtitle}>{damageDieAmount}</Text>
+          <Text style={styles.textSubtitle}>{damageValue}</Text>
           <TouchableOpacity
-            style={[
-              styles.button,
-              isDisabledIncreaseDamageAmount && styles.buttonSelected,
-            ]}
+            style={[styles.button, isDisabledIncrease && styles.buttonSelected]}
             onPress={() => increaseDamage()}
-            disabled={isDisabledIncreaseDamageAmount}
+            disabled={isDisabledIncrease}
           >
             <Text style={styles.buttonText}>+</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* --------------------------------Change Damage Die Size-------------------------------- */}
-        <View style={styles.rowContainer}>
-          <Text style={styles.textSubtitle}>Dice Size:</Text>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              isDisabledDecreaseSize && styles.buttonSelected,
-            ]}
-            onPress={() => decreaseDamageSize()}
-            disabled={isDisabledDecreaseSize}
-          >
-            <Text style={styles.buttonText}>-</Text>
-          </TouchableOpacity>
-          <Text style={styles.textSubtitle}>d{damageSize}</Text>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              isDisabledIncreaseSize && styles.buttonSelected,
-            ]}
-            onPress={() => increaseDamageSize()}
-            disabled={isDisabledIncreaseSize}
-          >
-            <Text style={styles.buttonText}>+</Text>
-          </TouchableOpacity>
-        </View>
-        {/* ----------------------------------Change Flat Damage---------------------------------- */}
-
-        <View style={styles.rowContainer}>
-          <Text style={styles.textSubtitle}>Bonus:</Text>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              isDisabledDecreaseFlatBonus && styles.buttonSelected,
-              useAbilityModifier && styles.buttonSelected,
-            ]}
-            onPress={() => decreaseDamageFlatBonus()}
-            disabled={isDisabledDecreaseFlatBonus || useAbilityModifier}
-          >
-            <Text style={styles.buttonText}>-</Text>
-          </TouchableOpacity>
-          <Text style={styles.textSubtitle}>{flatDamage}</Text>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              useAbilityModifier && styles.buttonSelected,
-              isDisabledIncreaseFlatBonus && styles.buttonSelected,
-            ]}
-            onPress={() => increaseDamageFlatBonus()}
-            disabled={isDisabledIncreaseFlatBonus || useAbilityModifier}
-          >
-            <Text style={styles.buttonText}>+</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.rowContainer}>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              useAbilityModifier && styles.buttonSelected,
-              isDisabledUseAbilityModifier && styles.buttonSelected,
-            ]}
-            onPress={() => {
-              useAbilityFlatBonus(useAbilityModifier),
-                setUseAbilityModifier(!useAbilityModifier);
-            }}
-            disabled={isDisabledUseAbilityModifier}
-          >
-            <Text style={styles.buttonText}>add Spell Casting Modifier</Text>
           </TouchableOpacity>
         </View>
         {/* -------------------------------Damage Range -------------------------------------*/}
@@ -1158,14 +711,12 @@ const spellOptions = () => {
           style={[
             styles.button,
             isSelectedDamageRange1 && styles.buttonSelected,
-            isDisabledDamageRange1 && styles.buttonSelected,
           ]}
           onPress={() => {
-            changeRange(true, isSelectedDamageRange1);
+            changeDamage(8, true, isSelectedDamageRange1);
             setIsSelectedDamageRange1(!isSelectedDamageRange1);
-            setIsSelectedDamageRange2(!isSelectedDamageRange2);
+            setIsSelectedDamageRange2(false);
           }}
-          disabled={isDisabledDamageRange1}
         >
           <Text style={styles.buttonText}>Ranged Spell</Text>
         </TouchableOpacity>
@@ -1173,14 +724,12 @@ const spellOptions = () => {
           style={[
             styles.button,
             isSelectedDamageRange2 && styles.buttonSelected,
-            isDisabledDamageRange2 && styles.buttonSelected,
           ]}
           onPress={() => {
-            changeRange(false, isSelectedDamageRange2);
-            setIsSelectedDamageRange1(!isSelectedDamageRange1);
+            changeDamage(10, false, isSelectedDamageRange2);
+            setIsSelectedDamageRange1(false);
             setIsSelectedDamageRange2(!isSelectedDamageRange2);
           }}
-          disabled={isDisabledDamageRange2}
         >
           <Text style={styles.buttonText}>Touch Spell</Text>
         </TouchableOpacity>
@@ -1190,7 +739,6 @@ const spellOptions = () => {
           style={[
             styles.button,
             isSelectedDamageType1 && styles.buttonSelected,
-            isDisabledDamageType1 && styles.buttonSelected,
           ]}
           onPress={() => {
             changeDamageType("Fire", 2, isSelectedDamageType1);
@@ -1205,7 +753,6 @@ const spellOptions = () => {
             setIsSelectedDamageType9(false);
             setIsSelectedDamageType10(false);
           }}
-          disabled={isDisabledDamageType1}
         >
           <Text style={styles.buttonText}>Fire</Text>
         </TouchableOpacity>
@@ -1213,7 +760,6 @@ const spellOptions = () => {
           style={[
             styles.button,
             isSelectedDamageType2 && styles.buttonSelected,
-            isDisabledDamageRange2 && styles.buttonSelected,
           ]}
           onPress={() => {
             changeDamageType("Cold", 2, isSelectedDamageType2);
@@ -1228,7 +774,6 @@ const spellOptions = () => {
             setIsSelectedDamageType9(false);
             setIsSelectedDamageType10(false);
           }}
-          disabled={isDisabledDamageType2}
         >
           <Text style={styles.buttonText}>Cold</Text>
         </TouchableOpacity>
@@ -1236,7 +781,6 @@ const spellOptions = () => {
           style={[
             styles.button,
             isSelectedDamageType3 && styles.buttonSelected,
-            isDisabledDamageType3 && styles.buttonSelected,
           ]}
           onPress={() => {
             changeDamageType("Lightning", 2, isSelectedDamageType3);
@@ -1251,7 +795,6 @@ const spellOptions = () => {
             setIsSelectedDamageType9(false);
             setIsSelectedDamageType10(false);
           }}
-          disabled={isDisabledDamageType3}
         >
           <Text style={styles.buttonText}>Lightning</Text>
         </TouchableOpacity>
@@ -1259,10 +802,9 @@ const spellOptions = () => {
           style={[
             styles.button1,
             isSelectedDamageType4 && styles.buttonSelected,
-            isDisabledDamageType4 && styles.buttonSelected,
           ]}
           onPress={() => {
-            changeDamageType("Thunder", 1, isSelectedDamageType4);
+            changeDamageType("Thunder", 0, isSelectedDamageType4);
             setIsSelectedDamageType1(false);
             setIsSelectedDamageType2(false);
             setIsSelectedDamageType3(false);
@@ -1274,7 +816,6 @@ const spellOptions = () => {
             setIsSelectedDamageType9(false);
             setIsSelectedDamageType10(false);
           }}
-          disabled={isDisabledDamageType4}
         >
           <Text style={styles.buttonText}>Thunder</Text>
         </TouchableOpacity>
@@ -1282,10 +823,9 @@ const spellOptions = () => {
           style={[
             styles.button1,
             isSelectedDamageType5 && styles.buttonSelected,
-            isDisabledDamageType5 && styles.buttonSelected,
           ]}
           onPress={() => {
-            changeDamageType("Necrotic", 1, isSelectedDamageType5);
+            changeDamageType("Necrotic", 0, isSelectedDamageType5);
             setIsSelectedDamageType1(false);
             setIsSelectedDamageType2(false);
             setIsSelectedDamageType3(false);
@@ -1297,7 +837,6 @@ const spellOptions = () => {
             setIsSelectedDamageType9(false);
             setIsSelectedDamageType10(false);
           }}
-          disabled={isDisabledDamageType5}
         >
           <Text style={styles.buttonText}>Necrotic</Text>
         </TouchableOpacity>
@@ -1305,10 +844,9 @@ const spellOptions = () => {
           style={[
             styles.button1,
             isSelectedDamageType6 && styles.buttonSelected,
-            isDisabledDamageType6 && styles.buttonSelected,
           ]}
           onPress={() => {
-            changeDamageType("Acid", 1, isSelectedDamageType6);
+            changeDamageType("Acid", 0, isSelectedDamageType6);
             setIsSelectedDamageType1(false);
             setIsSelectedDamageType2(false);
             setIsSelectedDamageType3(false);
@@ -1320,7 +858,6 @@ const spellOptions = () => {
             setIsSelectedDamageType9(false);
             setIsSelectedDamageType10(false);
           }}
-          disabled={isDisabledDamageType6}
         >
           <Text style={styles.buttonText}>Acid</Text>
         </TouchableOpacity>
@@ -1328,10 +865,9 @@ const spellOptions = () => {
           style={[
             styles.button1,
             isSelectedDamageType7 && styles.buttonSelected,
-            isDisabledDamageType7 && styles.buttonSelected,
           ]}
           onPress={() => {
-            changeDamageType("Poison", 1, isSelectedDamageType7);
+            changeDamageType("Poison", 0, isSelectedDamageType7);
             setIsSelectedDamageType1(false);
             setIsSelectedDamageType2(false);
             setIsSelectedDamageType3(false);
@@ -1343,7 +879,6 @@ const spellOptions = () => {
             setIsSelectedDamageType9(false);
             setIsSelectedDamageType10(false);
           }}
-          disabled={isDisabledDamageType7}
         >
           <Text style={styles.buttonText}>Poison</Text>
         </TouchableOpacity>
@@ -1351,10 +886,9 @@ const spellOptions = () => {
           style={[
             styles.button2,
             isSelectedDamageType8 && styles.buttonSelected,
-            isDisabledDamageType8 && styles.buttonSelected,
           ]}
           onPress={() => {
-            changeDamageType("Radiant", 0, isSelectedDamageType8);
+            changeDamageType("Radiant", -2, isSelectedDamageType8);
             setIsSelectedDamageType1(false);
             setIsSelectedDamageType2(false);
             setIsSelectedDamageType3(false);
@@ -1366,7 +900,6 @@ const spellOptions = () => {
             setIsSelectedDamageType9(false);
             setIsSelectedDamageType10(false);
           }}
-          disabled={isDisabledDamageType8}
         >
           <Text style={styles.buttonText}>Radiant</Text>
         </TouchableOpacity>
@@ -1374,10 +907,9 @@ const spellOptions = () => {
           style={[
             styles.button2,
             isSelectedDamageType9 && styles.buttonSelected,
-            isDisabledDamageType9 && styles.buttonSelected,
           ]}
           onPress={() => {
-            changeDamageType("Psychic", 0, isSelectedDamageType9);
+            changeDamageType("Psychic", -2, isSelectedDamageType9);
             setIsSelectedDamageType1(false);
             setIsSelectedDamageType2(false);
             setIsSelectedDamageType3(false);
@@ -1389,7 +921,6 @@ const spellOptions = () => {
             setIsSelectedDamageType9(!isSelectedDamageType9);
             setIsSelectedDamageType10(false);
           }}
-          disabled={isDisabledDamageType9}
         >
           <Text style={styles.buttonText}>Psychic</Text>
         </TouchableOpacity>
@@ -1397,10 +928,9 @@ const spellOptions = () => {
           style={[
             styles.button2,
             isSelectedDamageType10 && styles.buttonSelected,
-            isDisabledDamageType10 && styles.buttonSelected,
           ]}
           onPress={() => {
-            changeDamageType("Force", 0, isSelectedDamageType10);
+            changeDamageType("Force", -2, isSelectedDamageType10);
             setIsSelectedDamageType1(false);
             setIsSelectedDamageType2(false);
             setIsSelectedDamageType3(false);
@@ -1412,7 +942,6 @@ const spellOptions = () => {
             setIsSelectedDamageType9(false);
             setIsSelectedDamageType10(!isSelectedDamageType10);
           }}
-          disabled={isDisabledDamageType10}
         >
           <Text style={styles.buttonText}>Force</Text>
         </TouchableOpacity>
@@ -1420,28 +949,19 @@ const spellOptions = () => {
         <Text style={styles.textSubtitle}>Area of Effect: {aoeDeets}</Text>
         {/* -------------------------------AOE Level 1 -------------------------------------*/}
         <TouchableOpacity
-          style={[
-            styles.button1,
-            isSelectedAoe1 && styles.buttonSelected,
-            isDisabledAoe1 && styles.buttonSelected,
-          ]}
+          style={[styles.button1, isSelectedAoe1 && styles.buttonSelected]}
           onPress={() => {
-            changeAoe(1, "10ft radius circle", isSelectedAoe1);
+            changeAoe(1, "10ft square ", isSelectedAoe1);
             setIsSelectedAoe1(!isSelectedAoe1);
             setIsSelectedAoe2(false);
             setIsSelectedAoe3(false);
             setIsSelectedAoe4(false);
           }}
-          disabled={isDisabledAoe1}
         >
-          <Text style={styles.buttonText}>10ft radius circle</Text>
+          <Text style={styles.buttonText}>10ft square</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[
-            styles.button1,
-            isSelectedAoe2 && styles.buttonSelected,
-            isDisabledAoe2 && styles.buttonSelected,
-          ]}
+          style={[styles.button1, isSelectedAoe2 && styles.buttonSelected]}
           onPress={() => {
             changeAoe(1, "15ft line ", isSelectedAoe2);
             setIsSelectedAoe1(false);
@@ -1449,34 +969,24 @@ const spellOptions = () => {
             setIsSelectedAoe3(false);
             setIsSelectedAoe4(false);
           }}
-          disabled={isDisabledAoe2}
         >
           <Text style={styles.buttonText}>15ft line</Text>
         </TouchableOpacity>
         {/* -------------------------------AOE Level 2 -------------------------------------*/}
         <TouchableOpacity
-          style={[
-            styles.button2,
-            isSelectedAoe3 && styles.buttonSelected,
-            isDisabledAoe3 && styles.buttonSelected,
-          ]}
+          style={[styles.button2, isSelectedAoe3 && styles.buttonSelected]}
           onPress={() => {
-            changeAoe(2, "20ft radius circle", isSelectedAoe3);
+            changeAoe(2, "20ft square ", isSelectedAoe3);
             setIsSelectedAoe1(false);
             setIsSelectedAoe2(false);
             setIsSelectedAoe3(!isSelectedAoe3);
             setIsSelectedAoe4(false);
           }}
-          disabled={isDisabledAoe3}
         >
-          <Text style={styles.buttonText}>20ft radius circle</Text>
+          <Text style={styles.buttonText}>20ft square</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[
-            styles.button2,
-            isSelectedAoe4 && styles.buttonSelected,
-            isDisabledAoe4 && styles.buttonSelected,
-          ]}
+          style={[styles.button2, isSelectedAoe4 && styles.buttonSelected]}
           onPress={() => {
             changeAoe(2, "30ft line ", isSelectedAoe4);
             setIsSelectedAoe1(false);
@@ -1484,7 +994,6 @@ const spellOptions = () => {
             setIsSelectedAoe3(false);
             setIsSelectedAoe4(!isSelectedAoe4);
           }}
-          disabled={isDisabledAoe4}
         >
           <Text style={styles.buttonText}>30ft line</Text>
         </TouchableOpacity>
@@ -1492,16 +1001,11 @@ const spellOptions = () => {
         <Text style={styles.textSubtitle}>Spell Duration: {durationDeets}</Text>
         {/* -------------------------------Duration Level 1 -------------------------------------*/}
         <TouchableOpacity
-          style={[
-            styles.button1,
-            isSelectedDuration1 && styles.buttonSelected,
-            isDisabledDuration1 && styles.buttonSelected,
-          ]}
+          style={[styles.button1, isSelectedDuration1 && styles.buttonSelected]}
           onPress={() => {
             changeDuration(isSelectedDuration1);
             setIsSelectedDuration1(!isSelectedDuration1);
           }}
-          disabled={isDisabledDuration1}
         >
           <Text style={styles.buttonText}>10 minutes</Text>
         </TouchableOpacity>
@@ -2136,7 +1640,7 @@ const spellOptions = () => {
         </TouchableOpacity>
       </ScrollView>
       {/* ----------------------------*****Tutorial Popups*****------------------------------------*/}
-      {/* <Popover
+      <Popover
         isVisible={isSpellIntroPopupVisible}
         fromView={spellIntro.current}
         onRequestClose={() => setIsSpellIntroPopupVisible(false)}
@@ -2312,7 +1816,7 @@ const spellOptions = () => {
             That's it for the tutorial. Have fun creating your own spells!
           </Text>
         </View>
-      </Popover> */}
+      </Popover>
     </View>
   );
 };

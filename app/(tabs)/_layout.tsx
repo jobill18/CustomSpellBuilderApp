@@ -39,9 +39,20 @@ export default function TabLayout() {
       <Tabs.Screen
         name="spellOptions"
         options={{
+          href: null,
           title: "Create Spell",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="tutorial"
+        options={{
+          href: null,
+          title: "Tutorial",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="questionmark.app.fill" color={color} />
           ),
         }}
       />
